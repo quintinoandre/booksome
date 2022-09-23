@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @Builder
@@ -16,11 +15,11 @@ public class Book implements Serializable {
     @Id
     private String id;
     private String title;
-    private String[] authors;
+    private String authors;
     private String category;
-    private Integer isbn;
+    private String isbn;
     private String description;
-    private Date publishedDate;
+    private String publishedDate;
     private String publisher;
 
 

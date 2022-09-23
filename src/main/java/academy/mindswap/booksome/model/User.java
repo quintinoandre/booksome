@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -21,5 +22,8 @@ public class User implements Serializable {
     private String email;
 
     private String password;
+
+    private List<String> favoriteBooksId;
+    private List<String> readBooks;
 
 }
