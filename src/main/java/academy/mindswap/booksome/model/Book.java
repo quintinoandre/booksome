@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @Builder
-@Document
+@Document(value = "books")
 public class Book implements Serializable {
 
     @Id

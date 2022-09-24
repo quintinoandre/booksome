@@ -1,5 +1,6 @@
 package academy.mindswap.booksome.model;
 
+import academy.mindswap.booksome.util.role.RoleTypes;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Data
 @Builder
-@Document
+@Document(value = "users")
 public class User implements Serializable {
 
     @Id
@@ -25,5 +26,7 @@ public class User implements Serializable {
 
     private List<String> favoriteBooksId;
     private List<String> readBooks;
+
+    private List<RoleTypes> roles;
 
 }
