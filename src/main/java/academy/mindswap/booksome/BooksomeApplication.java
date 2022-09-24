@@ -2,12 +2,12 @@ package academy.mindswap.booksome;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class BooksomeApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(BooksomeApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BooksomeApplication.class, args);
+    }
 
 }
