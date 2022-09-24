@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ public class GoogleBooksClient {
 
     private final WebClient webClient;
 
+    @Autowired
     public GoogleBooksClient(WebClient.Builder builder) {
         this.webClient = builder
                 .baseUrl(BASE_URL)
