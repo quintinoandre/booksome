@@ -29,14 +29,14 @@ import static academy.mindswap.booksome.controller.JwtControllerConstant.SUB;
 import static academy.mindswap.booksome.exception.jwt.JwtExceptionMessage.*;
 import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
 
-public class JwtControllerImpl {
+public class JwtController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    public JwtControllerImpl(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-                             CustomUserDetailsService customUserDetailsService) {
+    public JwtController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
+                         CustomUserDetailsService customUserDetailsService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.customUserDetailsService = customUserDetailsService;
