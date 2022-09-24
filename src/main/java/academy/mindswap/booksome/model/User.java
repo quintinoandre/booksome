@@ -25,7 +25,7 @@ public class User implements Serializable {
     private String password;
 
     private List<String> favoriteBooksId;
-    private List<String> readBooks;
+    private List<String> readBooksId;
 
     private List<RoleTypes> roles;
 
