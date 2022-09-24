@@ -1,4 +1,4 @@
 package academy.mindswap.booksome.controller;
 
-public class UserControllerImpl {
+public class UserController {
 }

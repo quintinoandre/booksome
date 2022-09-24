@@ -14,11 +14,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/books")
-public class BookControllerImpl {
+public class BookController {
 
     private final BookServiceImpl bookService;
 
-    public BookControllerImpl(BookServiceImpl bookService) {
+    public BookController(BookServiceImpl bookService) {
         this.bookService = bookService;
     }
 
