@@ -2,6 +2,8 @@ package academy.mindswap.booksome.controller;
 
 import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.service.implementation.BookServiceImpl;
+import academy.mindswap.booksome.service.interfaces.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +18,10 @@ import java.util.Map;
 @RequestMapping("/api/v1/books")
 public class BookController {
 
-    private final BookServiceImpl bookService;
+    private final BookService bookService;
 
-    public BookController(BookServiceImpl bookService) {
+    @Autowired
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
