@@ -1,5 +1,6 @@
 package academy.mindswap.booksome.exception;
 
+import academy.mindswap.booksome.exception.client.Client4xxErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class AppExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppExceptionHandler.class);
 
     @ExceptionHandler(value = {NotFoundException.class, BadRequestException.class, AuthenticationException.class,
-            AccessDeniedException.class})
+            AccessDeniedException.class, Client4xxErrorException.class, Client4xxErrorException.class})
     public ResponseEntity<ExceptionError> handleException(Exception exception, HttpServletRequest request) {
         String logeErrorMessage = request.getMethod()
                 .concat(" ")
