@@ -8,7 +8,6 @@ import java.util.List;
 @Builder
 public class SaveBookDto {
 
-    private String id;
     private String title;
     private List<String> authors;
     private List<String> category;
