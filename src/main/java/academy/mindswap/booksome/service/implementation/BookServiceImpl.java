@@ -8,6 +8,7 @@ import academy.mindswap.booksome.service.interfaces.BookService;
 import academy.mindswap.booksome.util.book.BookSearchFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static academy.mindswap.booksome.service.implementation.ServiceConstant.*;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +26,10 @@ public class BookServiceImpl implements BookService {
 
     public List<?> findAll(Map<String, String> allParams) {
         Map<String, String> filteredBookSearch = BookSearchFilter.filterSearch(allParams);
-        String title = filteredBookSearch.get("title");
-        String authors = filteredBookSearch.get("authors");
-        String category = filteredBookSearch.get("category");
-        String isbn = filteredBookSearch.get("isbn");
+        String title = filteredBookSearch.get(TITLE);
+        String authors = filteredBookSearch.get(AUTHORS);
+        String category = filteredBookSearch.get(CATEGORY);
+        String isbn = filteredBookSearch.get(ISBN);
         List<BookDto> bookDto = bookRepository.findAll(title, authors, category, isbn)
                 .stream()
                 .map(BookConverter::convertBookToBookDto).toList();
