@@ -18,6 +18,7 @@ import java.util.List;
 
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.USERS_NOT_FOUND;
 import static academy.mindswap.booksome.util.user.UserMessage.USERS_FOUND;
+import static academy.mindswap.booksome.util.user.UserMessage.USER_FOUND;
 
 @Service
 @Slf4j
@@ -34,6 +35,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto findById(String id) {
+        User userEntity = findUser(id);
+
+        LOGGER.info(USER_FOUND);
+
+        return UserConverter.convertUserToUserDto(userEntity);
+    }
+
+    @Override
     public List<UserDto> findAll() {
         List<User> usersEntities = userRepository.findAll();
 
@@ -46,6 +56,11 @@ public class UserServiceImpl implements UserService {
         LOGGER.info(USERS_FOUND);
 
         return usersEntities.stream().map(UserConverter::convertUserToUserDto).toList();
+    }
+
+    @Override
+    public User findUser(String id) {
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
     @Override

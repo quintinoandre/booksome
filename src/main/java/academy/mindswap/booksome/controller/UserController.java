@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
+import static academy.mindswap.booksome.util.role.HasRoleTypes.USER;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -25,6 +27,12 @@ public class UserController {
     public UserController(UserService userService, RequestHandler requestHandler) {
         this.userService = userService;
         this.requestHandler = requestHandler;
+    }
+
+    @GetMapping
+    @PreAuthorize(USER)
+    public ResponseEntity<UserDto> findById(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.findById(requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
     @GetMapping("/all")
