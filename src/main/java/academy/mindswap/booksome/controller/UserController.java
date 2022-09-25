@@ -1,5 +1,6 @@
 package academy.mindswap.booksome.controller;
 
+import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
-import static academy.mindswap.booksome.exception.user.UserExceptionMessage.USER_NULL;
+import static academy.mindswap.booksome.exception.user.UserExceptionMessage.*;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.USER;
 import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
@@ -41,8 +42,6 @@ public class UserController {
     public ResponseEntity<?> save(@Valid @RequestBody SaveUserDto saveUserDto,
                                   BindingResult bindingResult) {
         if (saveUserDto == null) {
-            LOGGER.error(USER_NULL);
-
             throw new UserBadRequestException(USER_NULL);
         }
 
@@ -53,15 +52,34 @@ public class UserController {
         return new ResponseEntity<>(userService.save(saveUserDto), HttpStatus.CREATED);
     }
 
+    @GetMapping("/all")
+    @PreAuthorize(ADMIN)
+    public ResponseEntity<List<UserDto>> findAll() {
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
     @GetMapping
     @PreAuthorize(USER)
     public ResponseEntity<UserDto> findById(HttpServletRequest request) {
         return new ResponseEntity<>(userService.findById(requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @PutMapping("/{id}/roles")
     @PreAuthorize(ADMIN)
-    public ResponseEntity<List<UserDto>> findAll() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> assignRoles(@PathVariable String id, @Valid @RequestBody RolesDto rolesDto,
+                                         BindingResult bindingResult) {
+        if (id == null) {
+            throw new UserBadRequestException(USER_ID_NULL);
+        }
+
+        if (rolesDto == null) {
+            throw new UserBadRequestException(ROLES_NULL);
+        }
+
+        if (bindingResult.hasErrors()) {
+            return printValidationError(bindingResult);
+        }
+
+        return new ResponseEntity<>(userService.assignRoles(id, rolesDto), HttpStatus.OK);
     }
 }

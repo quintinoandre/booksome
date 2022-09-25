@@ -1,6 +1,7 @@
 package academy.mindswap.booksome.service.implementation;
 
 import academy.mindswap.booksome.converter.UserConverter;
+import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.EMAIL_ALREADY_EXISTS;
-import static academy.mindswap.booksome.exception.user.UserExceptionMessage.USERS_NOT_FOUND;
 import static academy.mindswap.booksome.util.user.UserMessage.*;
 
 @Service
@@ -40,8 +40,6 @@ public class UserServiceImpl implements UserService {
         boolean userExists = userRepository.existsByEmail(email);
 
         if (userExists) {
-            LOGGER.error(EMAIL_ALREADY_EXISTS);
-
             throw new UserBadRequestException(EMAIL_ALREADY_EXISTS);
         }
     }
@@ -60,6 +58,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> findAll() {
+        List<User> usersEntities = userRepository.findAll();
+
+        if (usersEntities.isEmpty()) {
+            throw new UsersNotFoundException();
+        }
+
+        LOGGER.info(USERS_FOUND);
+
+        return usersEntities.stream().map(UserConverter::convertUserToUserDto).toList();
+    }
+
+    @Override
     public UserDto findById(String id) {
         User userEntity = findUser(id);
 
@@ -69,18 +80,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAll() {
-        List<User> usersEntities = userRepository.findAll();
+    public UserDto assignRoles(String id, RolesDto rolesDto) {
+        User updatedUser = findUser(id);
 
-        if (usersEntities.isEmpty()) {
-            LOGGER.error(USERS_NOT_FOUND);
+        updatedUser.setRoles(rolesDto.getRoles());
 
-            throw new UsersNotFoundException();
-        }
+        LOGGER.info(ROLES_ASSIGN);
 
-        LOGGER.info(USERS_FOUND);
-
-        return usersEntities.stream().map(UserConverter::convertUserToUserDto).toList();
+        return UserConverter.convertUserToUserDto(userRepository.save(updatedUser));
     }
 
     @Override
