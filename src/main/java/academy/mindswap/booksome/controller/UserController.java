@@ -2,6 +2,7 @@ package academy.mindswap.booksome.controller;
 
 import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
+import academy.mindswap.booksome.dto.user.UpdateUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.service.interfaces.UserService;
@@ -81,5 +82,22 @@ public class UserController {
         }
 
         return new ResponseEntity<>(userService.assignRoles(id, rolesDto), HttpStatus.OK);
+    }
+
+    @PutMapping
+    @PreAuthorize(USER)
+    public ResponseEntity<?> update(HttpServletRequest request, @Valid @RequestBody UpdateUserDto
+            updateUserDto, BindingResult bindingResult
+    ) {
+        if (updateUserDto == null) {
+            throw new UserBadRequestException(USER_NULL);
+        }
+
+        if (bindingResult.hasErrors()) {
+            return printValidationError(bindingResult);
+        }
+
+        return new ResponseEntity<>(userService.update(requestHandler.getUserId(request), updateUserDto),
+                HttpStatus.OK);
     }
 }

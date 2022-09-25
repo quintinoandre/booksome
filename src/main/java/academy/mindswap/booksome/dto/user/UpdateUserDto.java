@@ -1,15 +1,18 @@
 package academy.mindswap.booksome.dto.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
 
-@Builder
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateUserDto {
     @NotBlank(message = "Name is mandatory")
     private String name;
@@ -19,7 +22,4 @@ public class UpdateUserDto {
 
     @Size(min = 4)
     private String password;
-
-    private List<String> favoriteBooksId;
-    private List<String> readBooksId;
 }

@@ -76,7 +76,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                 userDetails.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            } else {
+            } else if (!request.getRequestURL().toString().contains(AUTHENTICATE)) {
                 LOGGER.error(CANNOT_SET_SECURITY_CONTEXT);
             }
         } catch (ExpiredJwtException exception) {

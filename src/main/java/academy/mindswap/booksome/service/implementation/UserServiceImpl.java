@@ -3,6 +3,7 @@ package academy.mindswap.booksome.service.implementation;
 import academy.mindswap.booksome.converter.UserConverter;
 import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
+import academy.mindswap.booksome.dto.user.UpdateUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.exception.user.UserNotFoundException;
@@ -86,6 +87,30 @@ public class UserServiceImpl implements UserService {
         updatedUser.setRoles(rolesDto.getRoles());
 
         LOGGER.info(ROLES_ASSIGN);
+
+        return UserConverter.convertUserToUserDto(userRepository.save(updatedUser));
+    }
+
+    @Override
+    public UserDto update(String id, UpdateUserDto updateUserDto) {
+        User userEntity = UserConverter.convertUpdateUserDtoToUser(updateUserDto);
+
+        User updatedUser = findUser(id);
+
+        if (userEntity.getName() != null && !userEntity.getName().equals(updatedUser.getName())) {
+            updatedUser.setName(userEntity.getName());
+        }
+
+        if (userEntity.getEmail() != null && !userEntity.getEmail().equals(updatedUser.getEmail())) {
+            updatedUser.setEmail(userEntity.getEmail());
+        }
+
+        if (userEntity.getPassword() != null && !bcryptEncoder.matches(userEntity.getPassword(),
+                updatedUser.getPassword())) {
+            updatedUser.setPassword(bcryptEncoder.encode(userEntity.getPassword()));
+        }
+
+        LOGGER.info(USER_UPDATED);
 
         return UserConverter.convertUserToUserDto(userRepository.save(updatedUser));
     }
