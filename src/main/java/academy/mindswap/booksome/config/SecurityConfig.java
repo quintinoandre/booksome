@@ -26,8 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(JwtEntryPoint jwtEntryPoint,
-                          UserDetailsService jwtUserDetailsService, JwtFilter jwtFilter) {
+    public SecurityConfig(JwtEntryPoint jwtEntryPoint, UserDetailsService jwtUserDetailsService, JwtFilter jwtFilter) {
         this.jwtEntryPoint = jwtEntryPoint;
         this.userDetailsService = jwtUserDetailsService;
         this.jwtFilter = jwtFilter;

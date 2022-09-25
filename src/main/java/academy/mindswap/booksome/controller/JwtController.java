@@ -15,9 +15,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -29,6 +27,9 @@ import static academy.mindswap.booksome.controller.JwtControllerConstant.SUB;
 import static academy.mindswap.booksome.exception.jwt.JwtExceptionMessage.*;
 import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
 
+@RestController
+@RequestMapping("api/v1")
+@CrossOrigin
 public class JwtController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
