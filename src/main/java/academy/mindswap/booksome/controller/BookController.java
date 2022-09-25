@@ -26,8 +26,8 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDto>> findAll(@RequestParam Map<String, String> allParams) {
-        List<BookDto> bookList = bookService.findAll(allParams);
+    public ResponseEntity<List<?>> findAll(@RequestParam Map<String, String> allParams) {
+        List<?> bookList = bookService.findAll(allParams);
         return new ResponseEntity<>(bookList, HttpStatus.OK);
     }
 }
