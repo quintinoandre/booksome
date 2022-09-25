@@ -1,7 +1,9 @@
 package academy.mindswap.booksome.service.implementation;
 
 import academy.mindswap.booksome.converter.UserConverter;
+import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
+import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.exception.user.UserNotFoundException;
 import academy.mindswap.booksome.exception.user.UsersNotFoundException;
 import academy.mindswap.booksome.model.User;
@@ -16,9 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static academy.mindswap.booksome.exception.user.UserExceptionMessage.EMAIL_ALREADY_EXISTS;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.USERS_NOT_FOUND;
-import static academy.mindswap.booksome.util.user.UserMessage.USERS_FOUND;
-import static academy.mindswap.booksome.util.user.UserMessage.USER_FOUND;
+import static academy.mindswap.booksome.util.user.UserMessage.*;
 
 @Service
 @Slf4j
@@ -32,6 +34,29 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder bcryptEncoder) {
         this.userRepository = userRepository;
         this.bcryptEncoder = bcryptEncoder;
+    }
+
+    private void verifyEmailExits(String email) {
+        boolean userExists = userRepository.existsByEmail(email);
+
+        if (userExists) {
+            LOGGER.error(EMAIL_ALREADY_EXISTS);
+
+            throw new UserBadRequestException(EMAIL_ALREADY_EXISTS);
+        }
+    }
+
+    @Override
+    public UserDto save(SaveUserDto saveUserDto) {
+        User userEntity = UserConverter.convertSaveUserDtoToUser(saveUserDto);
+
+        verifyEmailExits(userEntity.getEmail());
+
+        userEntity.setPassword(bcryptEncoder.encode(userEntity.getPassword()));
+
+        LOGGER.info(USER_SAVED);
+
+        return UserConverter.convertUserToUserDto(userRepository.save(userEntity));
     }
 
     @Override
