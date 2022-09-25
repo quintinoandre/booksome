@@ -116,6 +116,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void delete(String id) {
+        verifyUserExists(id);
+
+        LOGGER.info(USER_DELETED);
+
+        userRepository.deleteById(id);
+    }
+
+    @Override
     public User findUser(String id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
@@ -123,5 +132,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public void verifyUserExists(String id) {
+        boolean userExists = userRepository.existsById(id);
+
+        if (userExists) {
+            return;
+        }
+
+        throw new UsersNotFoundException();
     }
 }

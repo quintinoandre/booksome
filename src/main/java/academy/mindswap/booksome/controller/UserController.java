@@ -100,4 +100,16 @@ public class UserController {
         return new ResponseEntity<>(userService.update(requestHandler.getUserId(request), updateUserDto),
                 HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize(ADMIN)
+    public ResponseEntity<?> delete(@PathVariable String id) {
+        if (id == null) {
+            throw new UserBadRequestException(USER_ID_NULL);
+        }
+
+        userService.delete(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

@@ -19,8 +19,11 @@ public interface UserService {
 
     UserDto update(String id, UpdateUserDto updateUserDto);
 
+    void delete(String id);
+
     User findUser(String id);
 
     User findByEmail(String email);
 
+    void verifyUserExists(String id);
 }
