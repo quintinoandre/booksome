@@ -1,4 +1,9 @@
 package academy.mindswap.booksome.exception.user;
 
-public class UserBadRequestException {
+import academy.mindswap.booksome.exception.BadRequestException;
+
+public class UserBadRequestException extends BadRequestException {
+    public UserBadRequestException(String message) {
+        super(message);
+    }
 }

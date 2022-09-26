@@ -6,22 +6,25 @@ import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.model.User;
 import org.modelmapper.ModelMapper;
 
-public class UserConverter {
+public final class UserConverter {
+    private UserConverter() {
+    }
+
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    public static UserDto convertUserToUserDto (User user){
+    public static UserDto convertUserToUserDto(User user) {
         return modelMapper.map(user, UserDto.class);
-
     }
-    public static User convertUserDtoToUser (UserDto userDto){
+
+    public static User convertUserDtoToUser(UserDto userDto) {
         return modelMapper.map(userDto, User.class);
     }
 
-    public static User convertUpdateUserDtoToUser(UpdateUserDto updateUserDto){
+    public static User convertUpdateUserDtoToUser(UpdateUserDto updateUserDto) {
         return modelMapper.map(updateUserDto, User.class);
     }
 
-    public static User convertSaveUserDtoToUser(SaveUserDto saveUserDto){
+    public static User convertSaveUserDtoToUser(SaveUserDto saveUserDto) {
         return modelMapper.map(saveUserDto, User.class);
     }
 }

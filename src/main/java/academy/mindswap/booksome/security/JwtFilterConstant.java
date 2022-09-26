@@ -10,4 +10,5 @@ public final class JwtFilterConstant {
     static final String IS_REFRESH_TOKEN = "isRefreshToken";
     static final String REFRESH_TOKEN = "refreshtoken";
     static final String TRUE = "true";
+    static final String AUTHENTICATE = "authenticate";
 }

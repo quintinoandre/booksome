@@ -5,4 +5,9 @@ public final class UserExceptionMessage {
     }
 
     public static final String USER_NOT_FOUND = "user not found";
+    public static final String USERS_NOT_FOUND = "no user found";
+    public static final String USER_NULL = "user object is null";
+    public static final String EMAIL_ALREADY_EXISTS = "email already exists";
+    public static final String USER_ID_NULL = "user id is null";
+    public static final String ROLES_NULL = "roles object is null";
 }
