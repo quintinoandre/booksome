@@ -79,7 +79,8 @@ public class GoogleBooksClient {
         }
 
         return URL_PREFIX
-                .concat("+").concat(INTITLE_SPECIAL_KEYWORD).concat(":").concat(title)
+                .concat(title != null ? "+" : "").concat(title != null ? INTITLE_SPECIAL_KEYWORD : "")
+                .concat(title != null ? ":" : "").concat(title != null ? title : "")
                 .concat(author != null ? "+" : "").concat(author != null ? INAUTHOR_SPECIAL_KEYWORD : "")
                 .concat(author != null ? ":" : "").concat(author != null ? author : "")
                 .concat(subject != null ? "+" : "").concat(subject != null ? SUBJECT_SPECIAL_KEYWORD : "")
