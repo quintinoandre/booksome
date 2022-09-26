@@ -8,6 +8,6 @@ import java.util.List;
 
 @Data
 public class RolesDto {
-    @NotNull(message = "Roles is mandatory")
+    @NotNull(message = "At least one role is mandatory")
     private List<RoleTypes> roles;
 }
