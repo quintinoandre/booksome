@@ -68,7 +68,7 @@ public class GoogleBooksClient {
         return items.get(position).path(path1).path(path2);
     }
 
-    private String buildUri(String title, String author, String subject, String isbn) {
+    private String buildUri(String title, String authors, String subject, String isbn) {
         final String URL_PREFIX = "/".concat(RESOURCE_VOLUMES).concat("?").concat(Q_PARAMETER).concat("=")
                 .concat("");
 
@@ -81,17 +81,17 @@ public class GoogleBooksClient {
         return URL_PREFIX
                 .concat(title != null ? "+" : "").concat(title != null ? INTITLE_SPECIAL_KEYWORD : "")
                 .concat(title != null ? ":" : "").concat(title != null ? title : "")
-                .concat(author != null ? "+" : "").concat(author != null ? INAUTHOR_SPECIAL_KEYWORD : "")
-                .concat(author != null ? ":" : "").concat(author != null ? author : "")
+                .concat(authors != null ? "+" : "").concat(authors != null ? INAUTHOR_SPECIAL_KEYWORD : "")
+                .concat(authors != null ? ":" : "").concat(authors != null ? authors : "")
                 .concat(subject != null ? "+" : "").concat(subject != null ? SUBJECT_SPECIAL_KEYWORD : "")
                 .concat(subject != null ? ":" : "").concat(subject != null ? subject : "").concat("&key=")
                 .concat(apiKey);
     }
 
-    public List<BookClientDto> findAll(String title, String author, String subject, String isbn) {
+    public List<BookClientDto> findAll(String title, String authors, String subject, String isbn) {
         String response = webClient
                 .get()
-                .uri(buildUri(title, author, subject, isbn))
+                .uri(buildUri(title, authors, subject, isbn))
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, this::handle4xxError)
                 .onStatus(HttpStatus::is5xxServerError, this::handle5xxError)
@@ -112,7 +112,7 @@ public class GoogleBooksClient {
 
         for (int i = 0; i < items.size(); i++) {
             String titleInfo = getTextInfo(items, i, VOLUME_INFO, TITLE);
-            JsonNode authors = getJsonNodeInfo(items, i, VOLUME_INFO, AUTHORS);
+            JsonNode authorsInfo = getJsonNodeInfo(items, i, VOLUME_INFO, AUTHORS);
             String publisher = getTextInfo(items, i, VOLUME_INFO, PUBLISHER);
             String publishedDate = getTextInfo(items, i, VOLUME_INFO, PUBLISHED_DATE);
             String description = getTextInfo(items, i, VOLUME_INFO, DESCRIPTION);
@@ -146,7 +146,7 @@ public class GoogleBooksClient {
             }
 
             List<String> authorsList = new LinkedList<>();
-            authors.forEach(authorInfo -> authorsList.add(authorInfo.asText()));
+            authorsInfo.forEach(authorInfo -> authorsList.add(authorInfo.asText()));
 
             List<String> categoryList = new LinkedList<>();
             category.forEach(categoryInfo -> categoryList.add(categoryInfo.asText()));

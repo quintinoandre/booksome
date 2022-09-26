@@ -1,4 +1,10 @@
 package academy.mindswap.booksome.exception.book;
 
-public class BookBadRequestException {
+import academy.mindswap.booksome.exception.BadRequestException;
+
+public final class BookBadRequestException extends BadRequestException {
+
+    public BookBadRequestException(String message) {
+        super(message);
+    }
 }
