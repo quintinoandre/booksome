@@ -1,4 +1,4 @@
-package academy.mindswap.booksome.controller;
+package academy.mindswap.booksome.controller.jwt;
 
 public final class JwtControllerConstant {
     private JwtControllerConstant() {

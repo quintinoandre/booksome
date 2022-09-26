@@ -16,9 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @Document(value = "books")
 public class Book implements Serializable {
-
     @Id
     private String id;
+    
     private String title;
     private List<String> authors;
     private List<String> category;
@@ -26,6 +26,4 @@ public class Book implements Serializable {
     private String description;
     private String publishedDate;
     private String publisher;
-
-
 }

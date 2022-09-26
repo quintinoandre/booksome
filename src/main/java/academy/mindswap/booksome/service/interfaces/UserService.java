@@ -9,8 +9,8 @@ import academy.mindswap.booksome.model.User;
 import java.util.List;
 
 public interface UserService {
-
     UserDto saveBookAsFavorite(String isbn, String userId);
+
     UserDto save(SaveUserDto saveUserDto);
 
     List<UserDto> findAll();

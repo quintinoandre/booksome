@@ -10,21 +10,15 @@ public final class UserConverter {
     private UserConverter() {
     }
 
-    private static final ModelMapper modelMapper = new ModelMapper();
-
     public static UserDto convertUserToUserDto(User user) {
-        return modelMapper.map(user, UserDto.class);
-    }
-
-    public static User convertUserDtoToUser(UserDto userDto) {
-        return modelMapper.map(userDto, User.class);
+        return new ModelMapper().map(user, UserDto.class);
     }
 
     public static User convertUpdateUserDtoToUser(UpdateUserDto updateUserDto) {
-        return modelMapper.map(updateUserDto, User.class);
+        return new ModelMapper().map(updateUserDto, User.class);
     }
 
     public static User convertSaveUserDtoToUser(SaveUserDto saveUserDto) {
-        return modelMapper.map(saveUserDto, User.class);
+        return new ModelMapper().map(saveUserDto, User.class);
     }
 }

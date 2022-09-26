@@ -13,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
+import static academy.mindswap.booksome.exception.user.UserExceptionMessage.EMAIL_ALREADY_EXISTS;
+import static academy.mindswap.booksome.util.user.UserMessage.USER_SAVED;
+
 @Configuration
 @Slf4j
 public class DataLoaderConfig {
@@ -20,9 +23,9 @@ public class DataLoaderConfig {
 
     private static void saveUser(UserRepository userRepository, String email, User user) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(email))) {
-            LOGGER.error("User with email ({}) already exists", email);
+            LOGGER.error(EMAIL_ALREADY_EXISTS);
         } else {
-            LOGGER.info("Inserting {} user", user.getName());
+            LOGGER.info(USER_SAVED);
 
             userRepository.insert(user);
         }

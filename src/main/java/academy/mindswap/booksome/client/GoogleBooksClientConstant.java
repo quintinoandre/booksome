@@ -14,14 +14,14 @@ public final class GoogleBooksClientConstant {
     static final String VOLUME_INFO = "volumeInfo";
     static final String TITLE = "title";
     static final String AUTHORS = "authors";
-    static final String PUBLISHER = "publisher";
-    static final String PUBLISHED_DATE = "publishedDate";
-    static final String DESCRIPTION = "description";
-    static final String INDUSTRY_IDENTIFIERS = "industryIdentifiers";
-    static final String TYPE = "type";
-    static final String ISBN_13 = "ISBN_13";
-    static final String IDENTIFIER = "identifier";
-    static final String ITEMS = "items";
     static final String CATEGORIES = "categories";
     static final String ISBN_10 = "ISBN_10";
+    static final String ISBN_13 = "ISBN_13";
+    static final String DESCRIPTION = "description";
+    static final String PUBLISHED_DATE = "publishedDate";
+    static final String PUBLISHER = "publisher";
+    static final String INDUSTRY_IDENTIFIERS = "industryIdentifiers";
+    static final String TYPE = "type";
+    static final String IDENTIFIER = "identifier";
+    static final String ITEMS = "items";
 }
