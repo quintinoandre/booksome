@@ -1,5 +1,6 @@
 package academy.mindswap.booksome.converter;
 
+import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.dto.book.SaveBookDto;
 
@@ -12,12 +13,13 @@ public class BookConverter {
     public static BookDto convertBookToBookDto(Book book){
         return modelMapper.map(book, BookDto.class);
     }
+
     public static Book convertBookDtoToBook(BookDto bookDto){
         return modelMapper.map(bookDto, Book.class);
     }
 
-    public static Book convertSaveBookDtoToBook(SaveBookDto saveBookDto){
-        return modelMapper.map(saveBookDto, Book.class);
+    public static Book convertBookClientDtoToBook(BookClientDto bookClientDto){
+        return modelMapper.map(bookClientDto, Book.class);
     }
 
 
