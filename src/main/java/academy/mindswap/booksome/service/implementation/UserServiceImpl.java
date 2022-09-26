@@ -3,11 +3,13 @@ package academy.mindswap.booksome.service.implementation;
 import academy.mindswap.booksome.client.GoogleBooksClient;
 import academy.mindswap.booksome.converter.BookConverter;
 import academy.mindswap.booksome.converter.UserConverter;
+import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UpdateUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
+import academy.mindswap.booksome.exception.book.BookNotFoundException;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.exception.user.UserNotFoundException;
 import academy.mindswap.booksome.exception.user.UsersNotFoundException;
@@ -49,36 +51,47 @@ public class UserServiceImpl implements UserService {
     }
 
     private void verifyEmailExits(String email) {
-        boolean userExists = userRepository.existsByEmail(email);
-
-        if (userExists) {
+        if (Boolean.TRUE.equals(userRepository.existsByEmail(email))) {
             throw new UserBadRequestException(EMAIL_ALREADY_EXISTS);
         }
     }
 
     @Override
     public UserDto saveBookAsFavorite(String isbn, String userId) {
-        Book book = bookService.findByIsbn(isbn);
-
         BookDto bookDto;
 
+        Book book = bookService.findByIsbn(isbn);
+
         if (book == null) {
-            bookDto = bookService.save(googleBooksClient.findAll("", "", "", isbn).get(0));
+            List<BookClientDto> bookClientDto = googleBooksClient.findAll("", "", "", isbn);
+
+            if (bookClientDto.isEmpty()) {
+                throw new BookNotFoundException();
+            }
+
+            bookDto = bookService.save(bookClientDto.get(0));
         } else {
             bookDto = BookConverter.convertBookToBookDto(book);
         }
 
         User user = findUser(userId);
+
         List<String> favoriteBooksId = new LinkedList<>();
+
         if (user.getFavoriteBooksId() != null) {
             favoriteBooksId.addAll(user.getFavoriteBooksId());
+
             if (user.getFavoriteBooksId().contains(bookDto.getId())) {
                 throw new UserBadRequestException(ALREADY_FAVORITE);
             }
         }
+
         favoriteBooksId.add(bookDto.getId());
+
         user.setFavoriteBooksId(favoriteBooksId);
+
         LOGGER.info(ADDED_FAVORITE_BOOK);
+
         return UserConverter.convertUserToUserDto(userRepository.save(user));
     }
 
@@ -97,24 +110,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() {
-        List<User> usersEntities = userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
-        if (usersEntities.isEmpty()) {
+        if (users.isEmpty()) {
             throw new UsersNotFoundException();
         }
 
         LOGGER.info(USERS_FOUND);
 
-        return usersEntities.stream().map(UserConverter::convertUserToUserDto).toList();
+        return users.stream().map(UserConverter::convertUserToUserDto).toList();
     }
 
     @Override
     public UserDto findById(String id) {
-        User userEntity = findUser(id);
+        User user = findUser(id);
 
         LOGGER.info(USER_FOUND);
 
-        return UserConverter.convertUserToUserDto(userEntity);
+        return UserConverter.convertUserToUserDto(user);
     }
 
     @Override
@@ -137,11 +150,9 @@ public class UserServiceImpl implements UserService {
         if (userEntity.getName() != null && !userEntity.getName().equals(updatedUser.getName())) {
             updatedUser.setName(userEntity.getName());
         }
-
         if (userEntity.getEmail() != null && !userEntity.getEmail().equals(updatedUser.getEmail())) {
             updatedUser.setEmail(userEntity.getEmail());
         }
-
         if (userEntity.getPassword() != null && !bcryptEncoder.matches(userEntity.getPassword(),
                 updatedUser.getPassword())) {
             updatedUser.setPassword(bcryptEncoder.encode(userEntity.getPassword()));

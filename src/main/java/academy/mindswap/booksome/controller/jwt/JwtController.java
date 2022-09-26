@@ -1,4 +1,4 @@
-package academy.mindswap.booksome.controller;
+package academy.mindswap.booksome.controller.jwt;
 
 import academy.mindswap.booksome.dto.jwt.JwtRequestDto;
 import academy.mindswap.booksome.dto.jwt.JwtResponseDto;
@@ -22,8 +22,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-import static academy.mindswap.booksome.controller.JwtControllerConstant.CLAIMS;
-import static academy.mindswap.booksome.controller.JwtControllerConstant.SUB;
+import static academy.mindswap.booksome.controller.jwt.JwtControllerConstant.CLAIMS;
+import static academy.mindswap.booksome.controller.jwt.JwtControllerConstant.SUB;
 import static academy.mindswap.booksome.exception.jwt.JwtExceptionMessage.*;
 import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
 

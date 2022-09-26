@@ -1,7 +1,6 @@
 package academy.mindswap.booksome.util.book;
 
 public final class BookMessage {
-
     private BookMessage() {
     }
 

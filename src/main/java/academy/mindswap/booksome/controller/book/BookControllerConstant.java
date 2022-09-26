@@ -1,8 +1,7 @@
-package academy.mindswap.booksome.controller;
+package academy.mindswap.booksome.controller.book;
 
-public final class ControllerConstant {
-
-    private ControllerConstant() {
+public final class BookControllerConstant {
+    private BookControllerConstant() {
     }
 
     static final String TITLE = "title";

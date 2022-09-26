@@ -1,10 +1,7 @@
-package academy.mindswap.booksome.controller;
+package academy.mindswap.booksome.controller.book;
 
 import academy.mindswap.booksome.dto.book.BookClientDto;
-import academy.mindswap.booksome.dto.book.BookDto;
-import academy.mindswap.booksome.dto.book.SaveBookDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
-import academy.mindswap.booksome.service.implementation.BookServiceImpl;
 import academy.mindswap.booksome.service.interfaces.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,20 +10,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import static academy.mindswap.booksome.controller.ControllerConstant.*;
-import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
-import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import static academy.mindswap.booksome.controller.book.BookControllerConstant.*;
+import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
+import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
 
 @RestController
 @RequestMapping("/api/v1/books")
 public class BookController {
-
     private final BookService bookService;
 
     @Autowired
@@ -42,6 +35,7 @@ public class BookController {
         if (bindingResult.hasErrors()) {
             return printValidationError(bindingResult);
         }
+
         return new ResponseEntity<>(bookService.save(bookClientDto), HttpStatus.CREATED);
     }
 
@@ -50,26 +44,22 @@ public class BookController {
         if (allParams.isEmpty()) {
             throw new BookBadRequestException(ALL_PARAMS_NULL);
         }
-        allParams.forEach((k, v) -> {
-            if (k.equals(TITLE) && !v.matches(LETTERS_ONLY))  {
+        allParams.forEach((key, value) -> {
+            if (key.equals(TITLE) && !value.matches(LETTERS_ONLY)) {
                 throw new BookBadRequestException(INVALID_TITLE);
             }
-            if (k.equals(AUTHORS) && !v.matches(LETTERS_ONLY)) {
-            throw new BookBadRequestException(INVALID_AUTHOR);
+            if (key.equals(AUTHORS) && !value.matches(LETTERS_ONLY)) {
+                throw new BookBadRequestException(INVALID_AUTHOR);
             }
-            if (k.equals(CATEGORY) && !v.matches(LETTERS_ONLY)) {
+            if (key.equals(CATEGORY) && !value.matches(LETTERS_ONLY)) {
                 throw new BookBadRequestException(INVALID_CATEGORY);
             }
-            if (k.equals(ISBN) && !v.matches(NUMBERS_ONLY)) {
+            if (key.equals(ISBN) && !value.matches(NUMBERS_ONLY)) {
                 throw new BookBadRequestException(INVALID_ISBN);
             }
         });
 
-        List<?> bookList = bookService.findAll(allParams);
-
-        return new ResponseEntity<>(bookList, HttpStatus.OK);
+        return new ResponseEntity<>(bookService.findAll(allParams), HttpStatus.OK);
     }
-
-
 }
 
