@@ -1,18 +1,23 @@
 package academy.mindswap.booksome.controller;
 
+import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
+import academy.mindswap.booksome.dto.book.SaveBookDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
 import academy.mindswap.booksome.service.implementation.BookServiceImpl;
 import academy.mindswap.booksome.service.interfaces.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
 import static academy.mindswap.booksome.controller.ControllerConstant.*;
 import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
+import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +32,17 @@ public class BookController {
     @Autowired
     public BookController(BookService bookService) {
         this.bookService = bookService;
+    }
+
+    @PostMapping
+    public ResponseEntity<?> save(@Valid @RequestBody BookClientDto bookClientDto, BindingResult bindingResult) {
+        if (bookClientDto == null) {
+            throw new BookBadRequestException(BOOK_NULL);
+        }
+        if (bindingResult.hasErrors()) {
+            return printValidationError(bindingResult);
+        }
+        return new ResponseEntity<>(bookService.save(bookClientDto), HttpStatus.CREATED);
     }
 
     @GetMapping

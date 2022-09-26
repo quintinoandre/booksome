@@ -1,6 +1,9 @@
 package academy.mindswap.booksome.service.implementation;
 
+import academy.mindswap.booksome.client.GoogleBooksClient;
+import academy.mindswap.booksome.converter.BookConverter;
 import academy.mindswap.booksome.converter.UserConverter;
+import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UpdateUserDto;
@@ -8,8 +11,10 @@ import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.exception.user.UserNotFoundException;
 import academy.mindswap.booksome.exception.user.UsersNotFoundException;
+import academy.mindswap.booksome.model.Book;
 import academy.mindswap.booksome.model.User;
 import academy.mindswap.booksome.repository.UserRepository;
+import academy.mindswap.booksome.service.interfaces.BookService;
 import academy.mindswap.booksome.service.interfaces.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -18,8 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import static academy.mindswap.booksome.exception.user.UserExceptionMessage.ALREADY_FAVORITE;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.EMAIL_ALREADY_EXISTS;
 import static academy.mindswap.booksome.util.user.UserMessage.*;
 
@@ -30,11 +37,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder bcryptEncoder;
+    private final BookService bookService;
+    private final GoogleBooksClient googleBooksClient;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder bcryptEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder bcryptEncoder, BookService bookService, GoogleBooksClient googleBooksClient) {
         this.userRepository = userRepository;
         this.bcryptEncoder = bcryptEncoder;
+        this.bookService = bookService;
+        this.googleBooksClient = googleBooksClient;
     }
 
     private void verifyEmailExits(String email) {
@@ -43,6 +54,32 @@ public class UserServiceImpl implements UserService {
         if (userExists) {
             throw new UserBadRequestException(EMAIL_ALREADY_EXISTS);
         }
+    }
+
+    @Override
+    public UserDto saveBookAsFavorite(String isbn, String userId) {
+        Book book = bookService.findByIsbn(isbn);
+
+        BookDto bookDto;
+
+        if (book == null) {
+            bookDto = bookService.save(googleBooksClient.findAll("", "", "", isbn).get(0));
+        } else {
+            bookDto = BookConverter.convertBookToBookDto(book);
+        }
+
+        User user = findUser(userId);
+        List<String> favoriteBooksId = new LinkedList<>();
+        if (user.getFavoriteBooksId() != null) {
+            favoriteBooksId.addAll(user.getFavoriteBooksId());
+            if (user.getFavoriteBooksId().contains(bookDto.getId())) {
+                throw new UserBadRequestException(ALREADY_FAVORITE);
+            }
+        }
+        favoriteBooksId.add(bookDto.getId());
+        user.setFavoriteBooksId(favoriteBooksId);
+        LOGGER.info(ADDED_FAVORITE_BOOK);
+        return UserConverter.convertUserToUserDto(userRepository.save(user));
     }
 
     @Override
@@ -55,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
         LOGGER.info(USER_SAVED);
 
-        return UserConverter.convertUserToUserDto(userRepository.save(userEntity));
+        return UserConverter.convertUserToUserDto(userRepository.insert(userEntity));
     }
 
     @Override

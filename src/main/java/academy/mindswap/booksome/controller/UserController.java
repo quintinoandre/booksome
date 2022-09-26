@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
+import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.*;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.USER;
@@ -45,7 +46,6 @@ public class UserController {
         if (saveUserDto == null) {
             throw new UserBadRequestException(USER_NULL);
         }
-
         if (bindingResult.hasErrors()) {
             return printValidationError(bindingResult);
         }
@@ -65,6 +65,14 @@ public class UserController {
         return new ResponseEntity<>(userService.findById(requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
+    @PutMapping("/book/{isbn}/favorites")
+    public ResponseEntity<UserDto> saveBookAsFavorite (HttpServletRequest request, @PathVariable String isbn) {
+        if (isbn == null) {
+            throw new UserBadRequestException(BOOK_ISBN_NULL);
+        }
+        return new ResponseEntity<>(userService.saveBookAsFavorite(isbn, requestHandler.getUserId(request)), HttpStatus.OK);
+    }
+
     @PutMapping("/{id}/roles")
     @PreAuthorize(ADMIN)
     public ResponseEntity<?> assignRoles(@PathVariable String id, @Valid @RequestBody RolesDto rolesDto,
@@ -72,11 +80,9 @@ public class UserController {
         if (id == null) {
             throw new UserBadRequestException(USER_ID_NULL);
         }
-
         if (rolesDto == null) {
             throw new UserBadRequestException(ROLES_NULL);
         }
-
         if (bindingResult.hasErrors()) {
             return printValidationError(bindingResult);
         }
@@ -92,7 +98,6 @@ public class UserController {
         if (updateUserDto == null) {
             throw new UserBadRequestException(USER_NULL);
         }
-
         if (bindingResult.hasErrors()) {
             return printValidationError(bindingResult);
         }
@@ -107,9 +112,10 @@ public class UserController {
         if (id == null) {
             throw new UserBadRequestException(USER_ID_NULL);
         }
-
         userService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
 }

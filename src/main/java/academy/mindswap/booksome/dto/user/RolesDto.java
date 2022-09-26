@@ -6,8 +6,10 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static academy.mindswap.booksome.dto.DtoValidationMessage.ROLE_MANDATORY;
+
 @Data
 public class RolesDto {
-    @NotNull(message = "At least one role is mandatory")
+    @NotNull(message = ROLE_MANDATORY)
     private List<RoleTypes> roles;
 }

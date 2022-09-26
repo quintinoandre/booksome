@@ -9,6 +9,9 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static academy.mindswap.booksome.dto.DtoValidationMessage.PASSWORD_MANDATORY;
+import static academy.mindswap.booksome.dto.DtoValidationMessage.USERNAME_MANDATORY;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -17,9 +20,9 @@ public class JwtRequestDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 5926468583005150707L;
 
-    @NotBlank(message = "username is mandatory")
+    @NotBlank(message = USERNAME_MANDATORY)
     private String username;
 
-    @NotBlank(message = "password is mandatory")
+    @NotBlank(message = PASSWORD_MANDATORY)
     private String password;
 }

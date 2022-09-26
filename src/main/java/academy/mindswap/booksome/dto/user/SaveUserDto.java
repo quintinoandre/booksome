@@ -9,15 +9,18 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import static academy.mindswap.booksome.dto.DtoValidationMessage.EMAIL_MANDATORY;
+import static academy.mindswap.booksome.dto.DtoValidationMessage.NAME_MANDATORY;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveUserDto {
-    @NotBlank(message = "Name is mandatory")
+    @NotBlank(message = NAME_MANDATORY)
     private String name;
 
-    @Email(message = "Email must be valid")
+    @Email(message = EMAIL_MANDATORY)
     private String email;
 
     @Size(min = 4)
