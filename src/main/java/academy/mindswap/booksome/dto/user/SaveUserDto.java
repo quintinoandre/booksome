@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 import static academy.mindswap.booksome.dto.DtoValidationMessage.EMAIL_MANDATORY;
 import static academy.mindswap.booksome.dto.DtoValidationMessage.NAME_MANDATORY;
@@ -16,7 +17,7 @@ import static academy.mindswap.booksome.dto.DtoValidationMessage.NAME_MANDATORY;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaveUserDto {
+public class SaveUserDto implements Serializable {
     @NotBlank(message = NAME_MANDATORY)
     private String name;
 

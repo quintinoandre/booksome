@@ -1,7 +1,6 @@
 package academy.mindswap.booksome.dto;
 
 public final class DtoValidationMessage {
-
     private DtoValidationMessage() {
     }
 
@@ -12,7 +11,6 @@ public final class DtoValidationMessage {
     public static final String DESCRIPTION_MANDATORY = "Description is mandatory.";
     public static final String PUBLISHED_DATE_MANDATORY = "Published date is mandatory.";
     public static final String PUBLISHER_MANDATORY = "Publisher is mandatory.";
-
     public static final String NAME_MANDATORY = "Name is mandatory.";
     public static final String EMAIL_MANDATORY = "Email must be valid.";
     public static final String ROLE_MANDATORY = "At least one role is mandatory.";

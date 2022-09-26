@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
-@Builder
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class BookDto {
-
+@AllArgsConstructor
+public class BookDto implements Serializable {
     private String id;
     private String title;
     private List<String> authors;
@@ -21,6 +21,4 @@ public class BookDto {
     private String description;
     private String publishedDate;
     private String publisher;
-
-
 }

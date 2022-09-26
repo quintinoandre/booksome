@@ -3,7 +3,9 @@ package academy.mindswap.booksome.util.book;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class BookSearchFilter {
+public final class BookSearchFilter {
+    private BookSearchFilter() {
+    }
 
     public static Map<String, String> filterSearch(Map<String, String> allParams) {
         return allParams.entrySet().stream()

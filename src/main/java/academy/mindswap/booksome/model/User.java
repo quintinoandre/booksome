@@ -20,6 +20,7 @@ import java.util.List;
 public class User implements Serializable {
     @Id
     private String id;
+    
     private String name;
 
     @Indexed(unique = true)

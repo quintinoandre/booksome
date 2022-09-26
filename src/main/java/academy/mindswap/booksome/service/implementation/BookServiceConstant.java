@@ -1,8 +1,7 @@
 package academy.mindswap.booksome.service.implementation;
 
-public final class ServiceConstant {
-
-    private ServiceConstant() {
+public final class BookServiceConstant {
+    private BookServiceConstant() {
     }
 
     static final String TITLE = "title";

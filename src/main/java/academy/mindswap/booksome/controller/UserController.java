@@ -7,8 +7,6 @@ import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.service.interfaces.UserService;
 import academy.mindswap.booksome.util.RequestHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
-import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
+import static academy.mindswap.booksome.exception.book.BookExceptionMessage.BOOK_ISBN_NULL;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.*;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.USER;
@@ -29,8 +27,6 @@ import static academy.mindswap.booksome.util.validation.PrintValidationError.pri
 @RestController
 @RequestMapping("api/v1/users")
 public class UserController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
     private final UserService userService;
     private final RequestHandler requestHandler;
 
@@ -66,11 +62,13 @@ public class UserController {
     }
 
     @PutMapping("/book/{isbn}/favorites")
-    public ResponseEntity<UserDto> saveBookAsFavorite (HttpServletRequest request, @PathVariable String isbn) {
+    public ResponseEntity<UserDto> saveBookAsFavorite(HttpServletRequest request, @PathVariable String isbn) {
         if (isbn == null) {
             throw new UserBadRequestException(BOOK_ISBN_NULL);
         }
-        return new ResponseEntity<>(userService.saveBookAsFavorite(isbn, requestHandler.getUserId(request)), HttpStatus.OK);
+
+        return new ResponseEntity<>(userService.saveBookAsFavorite(isbn, requestHandler.getUserId(request)),
+                HttpStatus.OK);
     }
 
     @PutMapping("/{id}/roles")
@@ -112,10 +110,9 @@ public class UserController {
         if (id == null) {
             throw new UserBadRequestException(USER_ID_NULL);
         }
+
         userService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }
