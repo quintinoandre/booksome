@@ -124,6 +124,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public BookDto findFavoriteBook(String id, String userId) {
+        List<String> favoriteBooksIds = findUser(userId).getFavoriteBooksId();
+
+        if (favoriteBooksIds == null || favoriteBooksIds.isEmpty()) {
+            throw new BookNotFoundException();
+        }
+
+        return bookService.findById(favoriteBooksIds
+                .stream()
+                .filter(bookId -> bookId.equals(id))
+                .toList().get(0));
+    }
+
+
+    @Override
     public List<BookDto> findFavoriteBooks(String id) {
         List<String> favoriteBooksIds = findUser(id).getFavoriteBooksId();
 

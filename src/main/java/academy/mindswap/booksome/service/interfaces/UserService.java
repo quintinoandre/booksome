@@ -16,6 +16,8 @@ public interface UserService {
 
     List<UserDto> findAll();
 
+    BookDto findFavoriteBook(String id, String userId);
+
     List<BookDto> findFavoriteBooks(String id);
 
     UserDto findById(String id);
