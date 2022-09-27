@@ -138,6 +138,16 @@ public class UserController {
         return new ResponseEntity<>(userService.deleteBookAsFavorite(id, requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
+    @DeleteMapping("/book/{id}/read")
+    @PreAuthorize(USER)
+    public ResponseEntity<?> deleteBookAsRead(HttpServletRequest request, @PathVariable String id) {
+        if (id == null) {
+            throw new UserBadRequestException(BOOK_ID_NULL);
+        }
+
+        return new ResponseEntity<>(userService.deleteBookAsRead(id, requestHandler.getUserId(request)), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize(ADMIN)
     public ResponseEntity<?> delete(@PathVariable String id) {

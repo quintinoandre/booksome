@@ -261,6 +261,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto deleteBookAsRead(String id, String userId) {
+        bookService.verifyBookExists(id);
+
+        User user = findUser(userId);
+
+        if (user.getReadBooksId() != null && !user.getReadBooksId().contains(id)) {
+            throw new BookBadRequestException(NO_READ);
+        }
+
+        List<String> readBooksId = new LinkedList<>(user.getReadBooksId().stream().filter(readBookId ->
+                !Objects.equals(readBookId, id)).toList());
+
+        user.setReadBooksId(readBooksId);
+
+        LOGGER.info(REMOVED_READ_BOOK);
+
+        User userSaved = userRepository.save(user);
+
+        if (Boolean.TRUE.equals(!userRepository.existsByFavoriteBooksId(id)) &&
+                Boolean.TRUE.equals(!userRepository.existsByReadBooksId(id))) {
+            bookService.delete(id);
+        }
+
+        return UserConverter.convertUserToUserDto(userSaved);
+    }
+
+    @Override
     public void delete(String id) {
         verifyUserExists(id);
 

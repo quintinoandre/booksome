@@ -30,6 +30,8 @@ public interface UserService {
 
     UserDto deleteBookAsFavorite(String id, String userId);
 
+    UserDto deleteBookAsRead(String id, String userId);
+    
     void delete(String id);
 
     User findUser(String id);
@@ -37,4 +39,5 @@ public interface UserService {
     User findByEmail(String email);
 
     void verifyUserExists(String id);
+
 }
