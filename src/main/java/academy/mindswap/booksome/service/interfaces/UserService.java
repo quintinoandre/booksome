@@ -1,5 +1,6 @@
 package academy.mindswap.booksome.service.interfaces;
 
+import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UpdateUserDto;
@@ -14,6 +15,8 @@ public interface UserService {
     UserDto save(SaveUserDto saveUserDto);
 
     List<UserDto> findAll();
+
+    List<BookDto> findFavoriteBooks(String id);
 
     UserDto findById(String id);
 

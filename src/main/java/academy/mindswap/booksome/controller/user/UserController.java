@@ -1,5 +1,6 @@
 package academy.mindswap.booksome.controller.user;
 
+import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UpdateUserDto;
@@ -54,6 +55,12 @@ public class UserController {
     @PreAuthorize(ADMIN)
     public ResponseEntity<List<UserDto>> findAll() {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/favoriteBooks")
+    @PreAuthorize(USER)
+    public ResponseEntity<List<BookDto>> findFavoriteBooks(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.findFavoriteBooks(requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
     @GetMapping

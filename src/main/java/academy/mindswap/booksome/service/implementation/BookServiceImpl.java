@@ -62,6 +62,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookDto findById(String id) {
+        return BookConverter.convertBookToBookDto(bookRepository.findById(id).orElseThrow(BookNotFoundException::new));
+    }
+
+    @Override
     public List<BookDto> findAll() {
         List<Book> books = bookRepository.findAll();
 
