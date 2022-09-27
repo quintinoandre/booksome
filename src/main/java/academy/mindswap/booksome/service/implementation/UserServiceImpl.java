@@ -67,11 +67,7 @@ public class UserServiceImpl implements UserService {
         if (book == null) {
             List<BookClientDto> bookClientDto = googleBooksClient.searchAll("", "", "", isbn);
 
-            if (bookClientDto.isEmpty()) {
-                throw new BookNotFoundException();
-            }
-
-            bookDto = bookService.save(bookClientDto.get(0));
+            bookDto = bookService.save(bookClientDto.stream().findAny().orElseThrow(BookNotFoundException::new));
         } else {
             bookDto = BookConverter.convertBookToBookDto(book);
         }
@@ -93,6 +89,45 @@ public class UserServiceImpl implements UserService {
         user.setFavoriteBooksId(favoriteBooksId);
 
         LOGGER.info(ADDED_FAVORITE_BOOK);
+
+        return UserConverter.convertUserToUserDto(userRepository.save(user));
+    }
+
+    @Override
+    public UserDto saveBookAsRead(String isbn, String userId) {
+        BookDto bookDto;
+
+        Book book = bookService.findByIsbn(isbn);
+
+        if (book == null) {
+            List<BookClientDto> bookClientDto = googleBooksClient.searchAll("", "", "", isbn);
+
+            if (bookClientDto.isEmpty()) {
+                throw new BookNotFoundException();
+            }
+
+            bookDto = bookService.save(bookClientDto.get(0));
+        } else {
+            bookDto = BookConverter.convertBookToBookDto(book);
+        }
+
+        User user = findUser(userId);
+
+        List<String> readBooksId = new LinkedList<>();
+
+        if (user.getReadBooksId() != null) {
+            readBooksId.addAll(user.getReadBooksId());
+
+            if (user.getReadBooksId().contains(bookDto.getId())) {
+                throw new UserBadRequestException(ALREADY_READ);
+            }
+        }
+
+        readBooksId.add(bookDto.getId());
+
+        user.setReadBooksId(readBooksId);
+
+        LOGGER.info(ADDED_READ_BOOK);
 
         return UserConverter.convertUserToUserDto(userRepository.save(user));
     }
@@ -134,7 +169,23 @@ public class UserServiceImpl implements UserService {
         return bookService.findById(favoriteBooksIds
                 .stream()
                 .filter(bookId -> bookId.equals(id))
-                .toList().get(0));
+                .findAny()
+                .orElseThrow(BookNotFoundException::new));
+    }
+
+    @Override
+    public BookDto findReadBook(String id, String userId) {
+        List<String> readBooksIds = findUser(userId).getReadBooksId();
+
+        if (readBooksIds == null || readBooksIds.isEmpty()) {
+            throw new BookNotFoundException();
+        }
+
+        return bookService.findById(readBooksIds
+                .stream()
+                .filter(bookId -> bookId.equals(id))
+                .findAny()
+                .orElseThrow(BookNotFoundException::new));
     }
 
 
@@ -147,6 +198,20 @@ public class UserServiceImpl implements UserService {
         }
 
         return favoriteBooksIds
+                .stream()
+                .map(bookService::findById)
+                .toList();
+    }
+
+    @Override
+    public List<BookDto> findReadBooks(String id) {
+        List<String> readBooksIds = findUser(id).getReadBooksId();
+
+        if (readBooksIds == null || readBooksIds.isEmpty()) {
+            throw new BooksNotFoundException();
+        }
+
+        return readBooksIds
                 .stream()
                 .map(bookService::findById)
                 .toList();
@@ -210,6 +275,33 @@ public class UserServiceImpl implements UserService {
         user.setFavoriteBooksId(favoriteBooksId);
 
         LOGGER.info(REMOVED_FAVORITE_BOOK);
+
+        User userSaved = userRepository.save(user);
+
+        if (Boolean.TRUE.equals(!userRepository.existsByFavoriteBooksId(id)) &&
+                Boolean.TRUE.equals(!userRepository.existsByReadBooksId(id))) {
+            bookService.delete(id);
+        }
+
+        return UserConverter.convertUserToUserDto(userSaved);
+    }
+
+    @Override
+    public UserDto deleteBookAsRead(String id, String userId) {
+        bookService.verifyBookExists(id);
+
+        User user = findUser(userId);
+
+        if (user.getReadBooksId() != null && !user.getReadBooksId().contains(id)) {
+            throw new BookBadRequestException(NO_READ);
+        }
+
+        List<String> readBooksId = new LinkedList<>(user.getReadBooksId().stream().filter(readBookId ->
+                !Objects.equals(readBookId, id)).toList());
+
+        user.setReadBooksId(readBooksId);
+
+        LOGGER.info(REMOVED_READ_BOOK);
 
         User userSaved = userRepository.save(user);
 

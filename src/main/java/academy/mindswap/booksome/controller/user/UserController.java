@@ -57,16 +57,28 @@ public class UserController {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/favoriteBook/{id}")
+    @GetMapping("/favoritebook/{id}")
     @PreAuthorize(USER)
     public ResponseEntity<BookDto> findFavoriteBook(HttpServletRequest request, @PathVariable String id) {
         return new ResponseEntity<>(userService.findFavoriteBook(id, requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
-    @GetMapping("/favoriteBooks")
+    @GetMapping("/readbook/{id}")
+    @PreAuthorize(USER)
+    public ResponseEntity<BookDto> findReadBook(HttpServletRequest request, @PathVariable String id) {
+        return new ResponseEntity<>(userService.findReadBook(id, requestHandler.getUserId(request)), HttpStatus.OK);
+    }
+
+    @GetMapping("/favoritebooks")
     @PreAuthorize(USER)
     public ResponseEntity<List<BookDto>> findFavoriteBooks(HttpServletRequest request) {
         return new ResponseEntity<>(userService.findFavoriteBooks(requestHandler.getUserId(request)), HttpStatus.OK);
+    }
+
+    @GetMapping("/readbooks")
+    @PreAuthorize(USER)
+    public ResponseEntity<List<BookDto>> findReadBooks(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.findReadBooks(requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
     @GetMapping
@@ -82,6 +94,16 @@ public class UserController {
         }
 
         return new ResponseEntity<>(userService.saveBookAsFavorite(isbn, requestHandler.getUserId(request)),
+                HttpStatus.OK);
+    }
+
+    @PutMapping("/book/{isbn}/read")
+    public ResponseEntity<UserDto> saveBookAsRead(HttpServletRequest request, @PathVariable String isbn) {
+        if (isbn == null) {
+            throw new UserBadRequestException(BOOK_ISBN_NULL);
+        }
+
+        return new ResponseEntity<>(userService.saveBookAsRead(isbn, requestHandler.getUserId(request)),
                 HttpStatus.OK);
     }
 
@@ -125,7 +147,18 @@ public class UserController {
             throw new UserBadRequestException(BOOK_ID_NULL);
         }
 
-        return new ResponseEntity<>(userService.deleteBookAsFavorite(id, requestHandler.getUserId(request)), HttpStatus.OK);
+        return new ResponseEntity<>(userService.deleteBookAsFavorite(id, requestHandler.getUserId(request)),
+                HttpStatus.OK);
+    }
+
+    @DeleteMapping("/book/{id}/read")
+    @PreAuthorize(USER)
+    public ResponseEntity<?> deleteBookAsRead(HttpServletRequest request, @PathVariable String id) {
+        if (id == null) {
+            throw new UserBadRequestException(BOOK_ID_NULL);
+        }
+
+        return new ResponseEntity<>(userService.deleteBookAsRead(id, requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

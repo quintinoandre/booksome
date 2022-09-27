@@ -12,13 +12,19 @@ import java.util.List;
 public interface UserService {
     UserDto saveBookAsFavorite(String isbn, String userId);
 
+    UserDto saveBookAsRead(String isbn, String userId);
+
     UserDto save(SaveUserDto saveUserDto);
 
     List<UserDto> findAll();
 
     BookDto findFavoriteBook(String id, String userId);
 
+    BookDto findReadBook(String id, String userId);
+
     List<BookDto> findFavoriteBooks(String id);
+
+    List<BookDto> findReadBooks(String id);
 
     UserDto findById(String id);
 
@@ -27,6 +33,8 @@ public interface UserService {
     UserDto update(String id, UpdateUserDto updateUserDto);
 
     UserDto deleteBookAsFavorite(String id, String userId);
+
+    UserDto deleteBookAsRead(String id, String userId);
 
     void delete(String id);
 
