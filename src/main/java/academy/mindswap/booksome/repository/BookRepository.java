@@ -11,9 +11,9 @@ import java.util.List;
 public interface BookRepository extends MongoRepository<Book, String> {
     @Query("{ $or: [ { title: { $regex: /?0/, $options: 'i' } }, { authors: { $in: [ /^?1/i ] } }, " +
             "{ category: { $in: [ /^?2/i ] } }, { isbn: { $regex: /?3/, $options: 'i' } } ] }")
-    List<Book> findAll(String title, String authors, String category, String isbn);
+    List<Book> searchAll(String title, String authors, String category, String isbn);
 
     Boolean existsByIsbn(String isbn);
-    
+
     Book findByIsbn(String isbn);
 }

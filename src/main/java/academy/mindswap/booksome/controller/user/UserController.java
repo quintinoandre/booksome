@@ -1,4 +1,4 @@
-package academy.mindswap.booksome.controller;
+package academy.mindswap.booksome.controller.user;
 
 import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
+import static academy.mindswap.booksome.exception.book.BookExceptionMessage.BOOK_ID_NULL;
 import static academy.mindswap.booksome.exception.book.BookExceptionMessage.BOOK_ISBN_NULL;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.*;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
@@ -102,6 +103,16 @@ public class UserController {
 
         return new ResponseEntity<>(userService.update(requestHandler.getUserId(request), updateUserDto),
                 HttpStatus.OK);
+    }
+
+    @DeleteMapping("/book/{id}/favorites")
+    @PreAuthorize(USER)
+    public ResponseEntity<?> deleteBookAsFavorite(HttpServletRequest request, @PathVariable String id) {
+        if (id == null) {
+            throw new UserBadRequestException(BOOK_ID_NULL);
+        }
+
+        return new ResponseEntity<>(userService.deleteBookAsFavorite(id, requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

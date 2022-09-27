@@ -10,7 +10,13 @@ import java.util.Map;
 public interface BookService {
     BookDto save(BookClientDto bookClientDto);
 
-    List<?> findAll(Map<String, String> allParams);
+    List<BookDto> findAll();
+
+    List<?> searchAll(Map<String, String> allParams);
 
     Book findByIsbn(String isbn);
+
+    void verifyBookExists(String id);
+
+    void delete(String id);
 }

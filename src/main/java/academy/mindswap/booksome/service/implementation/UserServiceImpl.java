@@ -9,6 +9,7 @@ import academy.mindswap.booksome.dto.user.RolesDto;
 import academy.mindswap.booksome.dto.user.SaveUserDto;
 import academy.mindswap.booksome.dto.user.UpdateUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
+import academy.mindswap.booksome.exception.book.BookBadRequestException;
 import academy.mindswap.booksome.exception.book.BookNotFoundException;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.exception.user.UserNotFoundException;
@@ -27,9 +28,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-import static academy.mindswap.booksome.exception.user.UserExceptionMessage.ALREADY_FAVORITE;
-import static academy.mindswap.booksome.exception.user.UserExceptionMessage.EMAIL_ALREADY_EXISTS;
+import static academy.mindswap.booksome.exception.user.UserExceptionMessage.*;
 import static academy.mindswap.booksome.util.user.UserMessage.*;
 
 @Service
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
         Book book = bookService.findByIsbn(isbn);
 
         if (book == null) {
-            List<BookClientDto> bookClientDto = googleBooksClient.findAll("", "", "", isbn);
+            List<BookClientDto> bookClientDto = googleBooksClient.searchAll("", "", "", isbn);
 
             if (bookClientDto.isEmpty()) {
                 throw new BookNotFoundException();
@@ -164,6 +165,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto deleteBookAsFavorite(String id, String userId) {
+        bookService.verifyBookExists(id);
+
+        User user = findUser(userId);
+
+        if (user.getFavoriteBooksId() != null && !user.getFavoriteBooksId().contains(id)) {
+            throw new BookBadRequestException(NO_FAVORITE);
+        }
+
+        List<String> favoriteBooksId = new LinkedList<>(user.getFavoriteBooksId().stream().filter(favoriteBookId ->
+                !Objects.equals(favoriteBookId, id)).toList());
+
+        user.setFavoriteBooksId(favoriteBooksId);
+
+        LOGGER.info(REMOVED_FAVORITE_BOOK);
+
+        User userSaved = userRepository.save(user);
+
+        if (Boolean.TRUE.equals(!userRepository.existsByFavoriteBooksId(id)) &&
+                Boolean.TRUE.equals(!userRepository.existsByReadBooksId(id))) {
+            bookService.delete(id);
+        }
+
+        return UserConverter.convertUserToUserDto(userSaved);
+    }
+
+    @Override
     public void delete(String id) {
         verifyUserExists(id);
 
@@ -184,9 +212,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUserExists(String id) {
-        boolean userExists = userRepository.existsById(id);
-
-        if (userExists) {
+        if (userRepository.existsById(id)) {
             return;
         }
 

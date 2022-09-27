@@ -21,6 +21,8 @@ public interface UserService {
 
     UserDto update(String id, UpdateUserDto updateUserDto);
 
+    UserDto deleteBookAsFavorite(String id, String userId);
+
     void delete(String id);
 
     User findUser(String id);

@@ -12,5 +12,7 @@ public final class BookExceptionMessage {
     public static final String BOOK_NULL = "Book cannot be null.";
     public static final String ISBN_ALREADY_EXISTS = "ISBN already exists.";
     public static final String BOOK_ISBN_NULL = "Book ISBN cannot be null.";
+    public static final String BOOK_ID_NULL = "Book id cannot be null.";
     public static final String BOOK_NOT_FOUND = "Book not found.";
+    public static final String BOOKS_NOT_FOUND = "No book found.";
 }
