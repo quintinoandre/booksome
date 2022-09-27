@@ -10,6 +10,8 @@ import java.util.Map;
 public interface BookService {
     BookDto save(BookClientDto bookClientDto);
 
+    BookDto findById (String id);
+
     List<BookDto> findAll();
 
     List<?> searchAll(Map<String, String> allParams);

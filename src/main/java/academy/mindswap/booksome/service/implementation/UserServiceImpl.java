@@ -11,6 +11,7 @@ import academy.mindswap.booksome.dto.user.UpdateUserDto;
 import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
 import academy.mindswap.booksome.exception.book.BookNotFoundException;
+import academy.mindswap.booksome.exception.book.BooksNotFoundException;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.exception.user.UserNotFoundException;
 import academy.mindswap.booksome.exception.user.UsersNotFoundException;
@@ -120,6 +121,35 @@ public class UserServiceImpl implements UserService {
         LOGGER.info(USERS_FOUND);
 
         return users.stream().map(UserConverter::convertUserToUserDto).toList();
+    }
+
+    @Override
+    public BookDto findFavoriteBook(String id, String userId) {
+        List<String> favoriteBooksIds = findUser(userId).getFavoriteBooksId();
+
+        if (favoriteBooksIds == null || favoriteBooksIds.isEmpty()) {
+            throw new BookNotFoundException();
+        }
+
+        return bookService.findById(favoriteBooksIds
+                .stream()
+                .filter(bookId -> bookId.equals(id))
+                .toList().get(0));
+    }
+
+
+    @Override
+    public List<BookDto> findFavoriteBooks(String id) {
+        List<String> favoriteBooksIds = findUser(id).getFavoriteBooksId();
+
+        if (favoriteBooksIds == null || favoriteBooksIds.isEmpty()) {
+            throw new BooksNotFoundException();
+        }
+
+        return favoriteBooksIds
+                .stream()
+                .map(bookService::findById)
+                .toList();
     }
 
     @Override
