@@ -1,11 +1,13 @@
 package academy.mindswap.booksome.controller.book;
 
 import academy.mindswap.booksome.dto.book.BookClientDto;
+import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
 import academy.mindswap.booksome.service.interfaces.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,8 @@ import java.util.Map;
 
 import static academy.mindswap.booksome.controller.book.BookControllerConstant.*;
 import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
+import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
+import static academy.mindswap.booksome.util.role.HasRoleTypes.USER;
 import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
 
 @RestController
@@ -39,8 +43,15 @@ public class BookController {
         return new ResponseEntity<>(bookService.save(bookClientDto), HttpStatus.CREATED);
     }
 
+    @GetMapping("/database")
+    @PreAuthorize(ADMIN)
+    public ResponseEntity<List<BookDto>> findAll() {
+        return new ResponseEntity<>(bookService.findAll(), HttpStatus.OK);
+    }
+
     @GetMapping
-    public ResponseEntity<List<?>> findAll(@RequestParam Map<String, String> allParams) {
+    @PreAuthorize(USER)
+    public ResponseEntity<List<?>> searchAll(@RequestParam Map<String, String> allParams) {
         if (allParams.isEmpty()) {
             throw new BookBadRequestException(ALL_PARAMS_NULL);
         }
@@ -59,7 +70,7 @@ public class BookController {
             }
         });
 
-        return new ResponseEntity<>(bookService.findAll(allParams), HttpStatus.OK);
+        return new ResponseEntity<>(bookService.searchAll(allParams), HttpStatus.OK);
     }
 }
 
