@@ -16,5 +16,7 @@ public interface BookService {
 
     Book findByIsbn(String isbn);
 
-    void verifyBookKExists(String id);
+    void verifyBookExists(String id);
+
+    void delete(String id);
 }

@@ -5,8 +5,8 @@ import academy.mindswap.booksome.converter.BookConverter;
 import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
+import academy.mindswap.booksome.exception.book.BookNotFoundException;
 import academy.mindswap.booksome.exception.book.BooksNotFoundException;
-import academy.mindswap.booksome.exception.user.UsersNotFoundException;
 import academy.mindswap.booksome.model.Book;
 import academy.mindswap.booksome.repository.BookRepository;
 import academy.mindswap.booksome.service.interfaces.BookService;
@@ -22,8 +22,7 @@ import java.util.Map;
 
 import static academy.mindswap.booksome.exception.book.BookExceptionMessage.ISBN_ALREADY_EXISTS;
 import static academy.mindswap.booksome.service.implementation.BookServiceConstant.*;
-import static academy.mindswap.booksome.util.book.BookMessage.BOOKS_FOUND;
-import static academy.mindswap.booksome.util.book.BookMessage.BOOK_SAVED;
+import static academy.mindswap.booksome.util.book.BookMessage.*;
 
 @Service
 @Slf4j
@@ -118,11 +117,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void verifyBookKExists(String id) {
+    public void verifyBookExists(String id) {
         if (bookRepository.existsById(id)) {
             return;
         }
 
-        throw new UsersNotFoundException();
+        throw new BookNotFoundException();
+    }
+
+    @Override
+    public void delete(String id) {
+        verifyBookExists(id);
+
+        LOGGER.info(BOOK_DELETED);
+
+        bookRepository.deleteById(id);
     }
 }
