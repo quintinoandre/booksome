@@ -12,6 +12,7 @@ public final class UserExceptionMessage {
     public static final String ROLES_NULL = "Roles object cannot be null.";
     public static final String ALREADY_FAVORITE = "This book is already one of your favorites.";
     public static final String ALREADY_READ = "You have already marked this book as read.";
+    public static final String INVALID_NAME = "Please insert a valid name (eg. Brad Pitt).";
     public static final String NO_FAVORITE = "This book is not one of your favorites.";
     public static final String NO_READ = "You have not read this book yet.";
 }

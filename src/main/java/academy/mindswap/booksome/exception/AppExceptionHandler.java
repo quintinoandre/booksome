@@ -1,6 +1,7 @@
 package academy.mindswap.booksome.exception;
 
 import academy.mindswap.booksome.exception.client.Client4xxErrorException;
+import academy.mindswap.booksome.exception.client.Client5xxErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class AppExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppExceptionHandler.class);
 
     @ExceptionHandler(value = {NotFoundException.class, BadRequestException.class, AuthenticationException.class,
-            AccessDeniedException.class, Client4xxErrorException.class, Client4xxErrorException.class})
+            AccessDeniedException.class, Client4xxErrorException.class, Client5xxErrorException.class})
     public ResponseEntity<ExceptionError> handleException(Exception exception, HttpServletRequest request) {
         String logeErrorMessage = request.getMethod()
                 .concat(" ")
@@ -30,11 +31,25 @@ public class AppExceptionHandler {
 
         LOGGER.error(logeErrorMessage);
 
+        HttpStatus httpStatus;
+
+        if (exception instanceof NotFoundException) {
+            httpStatus = HttpStatus.NOT_FOUND;
+        } else if (exception instanceof BadRequestException || exception instanceof Client4xxErrorException) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+        } else if (exception instanceof Client5xxErrorException) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        } else if (exception instanceof AuthenticationException || exception instanceof AccessDeniedException) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
+        } else {
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+
         return new ResponseEntity<>(ExceptionError.builder()
                 .timestamp(new Date())
                 .message(exception.getMessage())
                 .method(request.getMethod())
                 .path(request.getRequestURI())
-                .build(), HttpStatus.NOT_FOUND);
+                .build(), httpStatus);
     }
 }

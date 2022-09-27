@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import static academy.mindswap.booksome.controller.book.BookControllerConstant.*;
+import static academy.mindswap.booksome.controller.book.BookControllerPattern.LETTERS_ONLY;
+import static academy.mindswap.booksome.controller.book.BookControllerPattern.NUMBERS_ONLY;
 import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.USER;
