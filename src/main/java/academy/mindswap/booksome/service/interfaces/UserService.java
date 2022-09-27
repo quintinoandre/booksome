@@ -12,6 +12,8 @@ import java.util.List;
 public interface UserService {
     UserDto saveBookAsFavorite(String isbn, String userId);
 
+    UserDto saveBookAsRead(String isbn, String userId);
+
     UserDto save(SaveUserDto saveUserDto);
 
     List<UserDto> findAll();

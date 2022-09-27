@@ -85,6 +85,16 @@ public class UserController {
                 HttpStatus.OK);
     }
 
+    @PutMapping("/book/{isbn}/read")
+    public ResponseEntity<UserDto> saveBookAsRead(HttpServletRequest request, @PathVariable String isbn) {
+        if (isbn == null) {
+            throw new UserBadRequestException(BOOK_ISBN_NULL);
+        }
+
+        return new ResponseEntity<>(userService.saveBookAsRead(isbn, requestHandler.getUserId(request)),
+                HttpStatus.OK);
+    }
+
     @PutMapping("/{id}/roles")
     @PreAuthorize(ADMIN)
     public ResponseEntity<?> assignRoles(@PathVariable String id, @Valid @RequestBody RolesDto rolesDto,

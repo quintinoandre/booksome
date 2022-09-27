@@ -98,6 +98,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto saveBookAsRead(String isbn, String userId) {
+        BookDto bookDto;
+
+        Book book = bookService.findByIsbn(isbn);
+
+        if (book == null) {
+            List<BookClientDto> bookClientDto = googleBooksClient.searchAll("", "", "", isbn);
+
+            if (bookClientDto.isEmpty()) {
+                throw new BookNotFoundException();
+            }
+
+            bookDto = bookService.save(bookClientDto.get(0));
+        } else {
+            bookDto = BookConverter.convertBookToBookDto(book);
+        }
+
+        User user = findUser(userId);
+
+        List<String> readBooksId = new LinkedList<>();
+
+        if (user.getReadBooksId() != null) {
+            readBooksId.addAll(user.getReadBooksId());
+
+            if (user.getReadBooksId().contains(bookDto.getId())) {
+                throw new UserBadRequestException(ALREADY_READ);
+            }
+        }
+
+        readBooksId.add(bookDto.getId());
+
+        user.setReadBooksId(readBooksId);
+
+        LOGGER.info(ADDED_READ_BOOK);
+
+        return UserConverter.convertUserToUserDto(userRepository.save(user));
+    }
+
+    @Override
     public UserDto save(SaveUserDto saveUserDto) {
         User userEntity = UserConverter.convertSaveUserDtoToUser(saveUserDto);
 
