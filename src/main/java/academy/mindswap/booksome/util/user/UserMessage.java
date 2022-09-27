@@ -11,4 +11,5 @@ public final class UserMessage {
     public static final String USER_UPDATED = "User successfully updated.";
     public static final String USER_DELETED = "User successfully deleted.";
     public static final String ADDED_FAVORITE_BOOK = "The book has been successfully added to your favorites.";
+    public static final String REMOVED_FAVORITE_BOOK = "The book has been successfully removed from your favorites.";
 }
