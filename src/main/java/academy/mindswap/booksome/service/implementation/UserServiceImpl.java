@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
         Book book = bookService.findByIsbn(isbn);
 
         if (book == null) {
-            List<BookClientDto> bookClientDto = googleBooksClient.findAll("", "", "", isbn);
+            List<BookClientDto> bookClientDto = googleBooksClient.searchAll("", "", "", isbn);
 
             if (bookClientDto.isEmpty()) {
                 throw new BookNotFoundException();
@@ -166,7 +166,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto deleteBookAsFavorite(String id, String userId) {
-        bookService.verifyBookKExists(id);
+        bookService.verifyBookExists(id);
 
         User user = findUser(userId);
 
@@ -181,7 +181,14 @@ public class UserServiceImpl implements UserService {
 
         LOGGER.info(REMOVED_FAVORITE_BOOK);
 
-        return UserConverter.convertUserToUserDto(userRepository.save(user));
+        User userSaved = userRepository.save(user);
+
+        if (Boolean.TRUE.equals(!userRepository.existsByFavoriteBooksId(id)) &&
+                Boolean.TRUE.equals(!userRepository.existsByReadBooksId(id))) {
+            bookService.delete(id);
+        }
+
+        return UserConverter.convertUserToUserDto(userSaved);
     }
 
     @Override

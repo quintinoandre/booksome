@@ -30,5 +30,4 @@ public interface UserService {
     User findByEmail(String email);
 
     void verifyUserExists(String id);
-
 }
