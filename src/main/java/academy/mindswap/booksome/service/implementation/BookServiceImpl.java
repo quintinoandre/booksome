@@ -5,6 +5,7 @@ import academy.mindswap.booksome.converter.BookConverter;
 import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
+import academy.mindswap.booksome.exception.user.UsersNotFoundException;
 import academy.mindswap.booksome.model.Book;
 import academy.mindswap.booksome.repository.BookRepository;
 import academy.mindswap.booksome.service.interfaces.BookService;
@@ -95,5 +96,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book findByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn);
+    }
+
+    @Override
+    public void verifyBookKExists(String id) {
+        if (bookRepository.existsById(id)) {
+            return;
+        }
+
+        throw new UsersNotFoundException();
     }
 }

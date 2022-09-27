@@ -13,4 +13,6 @@ public interface BookService {
     List<?> findAll(Map<String, String> allParams);
 
     Book findByIsbn(String isbn);
+
+    void verifyBookKExists(String id);
 }
