@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 import static academy.mindswap.booksome.dto.DtoValidationMessage.*;
+import static academy.mindswap.booksome.dto.DtoValidationPattern.LETTERS_ONLY;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.INVALID_NAME;
 
 @Data
@@ -28,6 +29,7 @@ public class SaveUserDto implements Serializable {
     @NotBlank(message = EMAIL_NOT_BLANK)
     private String email;
 
-    @Size(min = 4)
+    @Size(min = 4, message = PASSWORD_SIZE)
+    @NotBlank(message = PASSWORD_MANDATORY)
     private String password;
 }
