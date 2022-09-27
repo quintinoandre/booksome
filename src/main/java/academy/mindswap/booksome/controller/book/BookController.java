@@ -3,6 +3,7 @@ package academy.mindswap.booksome.controller.book;
 import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
+import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.service.interfaces.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,18 @@ public class BookController {
         });
 
         return new ResponseEntity<>(bookService.searchAll(allParams), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize(ADMIN)
+    public ResponseEntity<?> delete(@PathVariable String id) {
+        if (id == null) {
+            throw new UserBadRequestException(BOOK_ID_NULL);
+        }
+
+        bookService.delete(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 
