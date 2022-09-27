@@ -192,6 +192,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<BookDto> findReadBooks(String id) {
+        List<String> readBooksIds = findUser(id).getReadBooksId();
+
+        if (readBooksIds == null || readBooksIds.isEmpty()) {
+            throw new BooksNotFoundException();
+        }
+
+        return readBooksIds
+                .stream()
+                .map(bookService::findById)
+                .toList();
+    }
+
+    @Override
     public UserDto findById(String id) {
         User user = findUser(id);
 
