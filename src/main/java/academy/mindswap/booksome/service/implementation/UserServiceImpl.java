@@ -67,11 +67,7 @@ public class UserServiceImpl implements UserService {
         if (book == null) {
             List<BookClientDto> bookClientDto = googleBooksClient.searchAll("", "", "", isbn);
 
-            if (bookClientDto.isEmpty()) {
-                throw new BookNotFoundException();
-            }
-
-            bookDto = bookService.save(bookClientDto.get(0));
+            bookDto = bookService.save(bookClientDto.stream().findAny().orElseThrow(BookNotFoundException::new));
         } else {
             bookDto = BookConverter.convertBookToBookDto(book);
         }
@@ -173,7 +169,23 @@ public class UserServiceImpl implements UserService {
         return bookService.findById(favoriteBooksIds
                 .stream()
                 .filter(bookId -> bookId.equals(id))
-                .toList().get(0));
+                .findAny()
+                .orElseThrow(BookNotFoundException::new));
+    }
+
+    @Override
+    public BookDto findReadBook(String id, String userId) {
+        List<String> readBooksIds = findUser(userId).getReadBooksId();
+
+        if (readBooksIds == null || readBooksIds.isEmpty()) {
+            throw new BookNotFoundException();
+        }
+
+        return bookService.findById(readBooksIds
+                .stream()
+                .filter(bookId -> bookId.equals(id))
+                .findAny()
+                .orElseThrow(BookNotFoundException::new));
     }
 
 

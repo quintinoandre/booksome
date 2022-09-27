@@ -20,6 +20,8 @@ public interface UserService {
 
     BookDto findFavoriteBook(String id, String userId);
 
+    BookDto findReadBook(String id, String userId);
+
     List<BookDto> findFavoriteBooks(String id);
 
     List<BookDto> findReadBooks(String id);

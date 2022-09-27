@@ -95,8 +95,12 @@ public class BookServiceImpl implements BookService {
             if (bookDto.isEmpty()) {
                 try {
                     bookDto = googleBooksClient.searchAll(title, authors, category, isbn);
+
+                    if (bookDto.isEmpty()) {
+                        throw new BookNotFoundException();
+                    }
                 } catch (RuntimeException exception) {
-                    return bookDto;
+                    throw new BookNotFoundException();
                 }
             }
 

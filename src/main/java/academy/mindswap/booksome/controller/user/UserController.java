@@ -63,6 +63,12 @@ public class UserController {
         return new ResponseEntity<>(userService.findFavoriteBook(id, requestHandler.getUserId(request)), HttpStatus.OK);
     }
 
+    @GetMapping("/readbook/{id}")
+    @PreAuthorize(USER)
+    public ResponseEntity<BookDto> findReadBook(HttpServletRequest request, @PathVariable String id) {
+        return new ResponseEntity<>(userService.findReadBook(id, requestHandler.getUserId(request)), HttpStatus.OK);
+    }
+
     @GetMapping("/favoritebooks")
     @PreAuthorize(USER)
     public ResponseEntity<List<BookDto>> findFavoriteBooks(HttpServletRequest request) {
