@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,6 +53,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @CacheEvict(value = "books", allEntries = true)
     public BookDto save(BookClientDto bookClientDto) {
         Book bookEntity = BookConverter.convertBookClientDtoToBook(bookClientDto);
 
@@ -62,11 +65,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Cacheable(value = "books", key = "#id")
     public BookDto findById(String id) {
         return BookConverter.convertBookToBookDto(bookRepository.findById(id).orElseThrow(BookNotFoundException::new));
     }
 
     @Override
+    @Cacheable(value = "books")
     public List<BookDto> findAll() {
         List<Book> books = bookRepository.findAll();
 
@@ -79,6 +84,7 @@ public class BookServiceImpl implements BookService {
         return books.stream().map(BookConverter::convertBookToBookDto).toList();
     }
 
+    @Override
     public List<?> searchAll(Map<String, String> allParams) {
         Map<String, String> filteredBookSearch = BookSearchFilter.filterSearch(allParams);
 
@@ -121,6 +127,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Cacheable(value = "books", key = "#isbn")
     public Book findByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn);
     }
@@ -135,6 +142,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @CacheEvict(value = "books", allEntries = true)
     public void delete(String id) {
         verifyBookExists(id);
 
