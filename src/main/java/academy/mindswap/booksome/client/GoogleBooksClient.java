@@ -88,7 +88,7 @@ public class GoogleBooksClient {
                 .concat(apiKey);
     }
 
-    public List<BookClientDto> findAll(String title, String authors, String subject, String isbn) {
+    public List<BookClientDto> searchAll(String title, String authors, String subject, String isbn) {
         String response = webClient
                 .get()
                 .uri(buildUri(title, authors, subject, isbn))

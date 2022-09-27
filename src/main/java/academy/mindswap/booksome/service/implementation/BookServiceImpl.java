@@ -5,6 +5,7 @@ import academy.mindswap.booksome.converter.BookConverter;
 import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
 import academy.mindswap.booksome.exception.book.BookBadRequestException;
+import academy.mindswap.booksome.exception.book.BooksNotFoundException;
 import academy.mindswap.booksome.exception.user.UsersNotFoundException;
 import academy.mindswap.booksome.model.Book;
 import academy.mindswap.booksome.repository.BookRepository;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 import static academy.mindswap.booksome.exception.book.BookExceptionMessage.ISBN_ALREADY_EXISTS;
 import static academy.mindswap.booksome.service.implementation.BookServiceConstant.*;
+import static academy.mindswap.booksome.util.book.BookMessage.BOOKS_FOUND;
 import static academy.mindswap.booksome.util.book.BookMessage.BOOK_SAVED;
 
 @Service
@@ -38,7 +40,7 @@ public class BookServiceImpl implements BookService {
     }
 
     private List<BookDto> findInDatabase(String title, String authors, String category, String isbn) {
-        return bookRepository.findAll(title, authors, category, isbn)
+        return bookRepository.searchAll(title, authors, category, isbn)
                 .stream()
                 .map(BookConverter::convertBookToBookDto).toList();
     }
@@ -60,7 +62,20 @@ public class BookServiceImpl implements BookService {
         return BookConverter.convertBookToBookDto(bookRepository.insert(bookEntity));
     }
 
-    public List<?> findAll(Map<String, String> allParams) {
+    @Override
+    public List<BookDto> findAll() {
+        List<Book> books = bookRepository.findAll();
+
+        if (books.isEmpty()) {
+            throw new BooksNotFoundException();
+        }
+
+        LOGGER.info(BOOKS_FOUND);
+
+        return books.stream().map(BookConverter::convertBookToBookDto).toList();
+    }
+
+    public List<?> searchAll(Map<String, String> allParams) {
         Map<String, String> filteredBookSearch = BookSearchFilter.filterSearch(allParams);
 
         String title = filteredBookSearch.get(TITLE);
@@ -75,20 +90,24 @@ public class BookServiceImpl implements BookService {
 
             if (bookDto.isEmpty()) {
                 try {
-                    bookDto = googleBooksClient.findAll(title, authors, category, isbn);
+                    bookDto = googleBooksClient.searchAll(title, authors, category, isbn);
                 } catch (RuntimeException exception) {
                     return bookDto;
                 }
             }
 
+            LOGGER.info(BOOKS_FOUND);
+
             return bookDto;
         }
 
         try {
-            bookDto = googleBooksClient.findAll(title, authors, category, isbn);
+            bookDto = googleBooksClient.searchAll(title, authors, category, isbn);
         } catch (RuntimeException exception) {
             bookDto = findInDatabase(title, authors, category, isbn);
         }
+
+        LOGGER.info(BOOKS_FOUND);
 
         return bookDto;
     }
