@@ -19,7 +19,7 @@ import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookClientDto implements Serializable {
+public class UpdateBookDto implements Serializable {
     @NotBlank(message = TITLE_MANDATORY)
     @Pattern(regexp = LETTERS_ONLY, message = INVALID_TITLE)
     private String title;

@@ -43,4 +43,8 @@ public interface UserService {
     User findByEmail(String email);
 
     void verifyUserExists(String id);
+
+    Boolean existsByFavoriteBooksId(String id);
+
+    Boolean existsByReadBooksId(String id);
 }

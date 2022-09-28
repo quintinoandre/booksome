@@ -2,6 +2,7 @@ package academy.mindswap.booksome.service.interfaces;
 
 import academy.mindswap.booksome.dto.book.BookClientDto;
 import academy.mindswap.booksome.dto.book.BookDto;
+import academy.mindswap.booksome.dto.book.UpdateBookDto;
 import academy.mindswap.booksome.model.Book;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Map;
 public interface BookService {
     BookDto save(BookClientDto bookClientDto);
 
-    BookDto findById (String id);
+    BookDto findById(String id);
 
     List<BookDto> findAll();
 
@@ -20,5 +21,9 @@ public interface BookService {
 
     void verifyBookExists(String id);
 
+    BookDto update(String id, UpdateBookDto updateBookDto);
+
     void delete(String id);
+
+    Book findBook(String id);
 }
