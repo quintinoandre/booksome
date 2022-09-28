@@ -4,22 +4,20 @@ import academy.mindswap.booksome.tests.util.UserUtil;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.responseSpecification;
 
 public class CreateNewUserTests {
 
     @BeforeAll
-    public static void setup(){
+    public static void setup() {
         RestAssured.baseURI = "http://localhost:8080";
     }
 
     @Test
-    public void createUser(){
+    void createUser() {
         Response response = given()
                 .header("Content-Type", "application/json")
                 .and()
@@ -37,7 +35,7 @@ public class CreateNewUserTests {
     }
 
     @Test
-    public void createUserWithMissingInformationShouldNotBeAllowed(){
+    void createUserWithMissingInformationShouldNotBeAllowed() {
         Response response = given()
                 .header("Content-Type", "application/json")
                 .and()
@@ -48,8 +46,6 @@ public class CreateNewUserTests {
 
         Assertions.assertEquals(400, response.statusCode());
     }
-
-
 
 
 }

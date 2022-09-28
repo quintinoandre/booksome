@@ -4,6 +4,6 @@ public final class BookControllerPattern {
     private BookControllerPattern() {
     }
 
-    static final String LETTERS_ONLY = "^[a-zA-Z]+((\\s{1}[a-zA-Z]+)+)?";
+    static final String LETTERS_ONLY = "^[A-Za-zÀ-ü]+((\\s{1}[A-Za-zÀ-ü]+)+)?";
     static final String NUMBERS_ONLY = "^\\d+$";
 }
