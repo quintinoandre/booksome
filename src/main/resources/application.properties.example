@@ -1,0 +1,40 @@
+#ex. 8080
+server.port=
+#ex. always
+server.error.include-message=
+#ex. admin
+spring.data.mongodb.authentication-database=
+#ex. root
+spring.data.mongodb.username=
+#ex. password
+spring.data.mongodb.password=
+#ex. booksome
+spring.data.mongodb.database=
+#ex. 27017
+spring.data.mongodb.port=
+#ex. localhost
+spring.data.mongodb.host=
+#ex. true
+spring.data.mongodb.auto-index-creation=
+#ex. ssq5c1rP9CutOYNhg7JYbvjGop4E$?hAsoSPa5nP
+jwt.secret=
+#ex. 0
+jwt.expirationDateInMs=
+#ex. 7200000
+jwt.refreshExpirationDateInMs=
+#ex. 86400000
+jwt.allowForRefreshTokenExpirationDateInMs=
+#ex. method
+springdoc.swagger-ui.operationsSorter=
+#ex. /docs
+springdoc.swagger-ui.path=
+#ex. redis
+spring.cache.type=
+#ex. localhost
+spring.redis.host=
+#ex. 6379
+spring.redis.port=
+#ex. TRACE
+logging.level.org.springframework.cache=
+#ex. AIzaSyCApx2-P6O3ES9D9WXUnP0pmx8vIem7j88
+google_books_client.api_key=
