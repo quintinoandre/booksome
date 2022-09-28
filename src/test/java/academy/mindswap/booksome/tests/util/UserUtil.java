@@ -1,13 +1,10 @@
 package academy.mindswap.booksome.tests.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-
-import java.util.Map;
 
 
 public final class UserUtil {
@@ -22,7 +19,7 @@ public final class UserUtil {
     }
 
 
-    public static UserCreationRequest createUser(){
+    public static UserCreationRequest createUserRequest(){
         String email = RandomStringUtils.randomAlphabetic(10);
         var requestBody = UserCreationRequest.builder()
                 .name("José da Silva")
@@ -33,7 +30,17 @@ public final class UserUtil {
         return requestBody;
     }
 
-    public static UserCreationRequest createUserWithMissingInformation(){
+    public static UserCreationRequest createUserRequest(String email){
+        var requestBody = UserCreationRequest.builder()
+                .name("José da Silva")
+                .email(email)
+                .password("1234")
+                .build();
+
+        return requestBody;
+    }
+
+    public static UserCreationRequest createUserRequestWithMissingInformation(){
         String email = RandomStringUtils.randomAlphabetic(10);
         var requestBody = UserCreationRequest.builder()
                 .email(email + "@gmail.com")
