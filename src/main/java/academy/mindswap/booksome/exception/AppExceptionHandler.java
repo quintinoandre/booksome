@@ -39,8 +39,10 @@ public class AppExceptionHandler {
             httpStatus = HttpStatus.BAD_REQUEST;
         } else if (exception instanceof Client5xxErrorException) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        } else if (exception instanceof AuthenticationException || exception instanceof AccessDeniedException) {
+        } else if (exception instanceof AuthenticationException) {
             httpStatus = HttpStatus.UNAUTHORIZED;
+        } else if (exception instanceof AccessDeniedException) {
+            httpStatus = HttpStatus.FORBIDDEN;
         } else {
             httpStatus = HttpStatus.BAD_REQUEST;
         }

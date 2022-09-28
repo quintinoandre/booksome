@@ -2,10 +2,18 @@ package academy.mindswap.booksome.controller.jwt;
 
 import academy.mindswap.booksome.dto.jwt.JwtRequestDto;
 import academy.mindswap.booksome.dto.jwt.JwtResponseDto;
+import academy.mindswap.booksome.exception.ExceptionError;
+import academy.mindswap.booksome.exception.jwt.JwtAuthenticationException;
 import academy.mindswap.booksome.exception.jwt.JwtBadRequestException;
 import academy.mindswap.booksome.service.interfaces.CustomUserDetailsService;
 import academy.mindswap.booksome.util.jwt.JwtUtil;
 import io.jsonwebtoken.impl.DefaultClaims;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +30,11 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-import static academy.mindswap.booksome.controller.jwt.JwtControllerConstant.CLAIMS;
-import static academy.mindswap.booksome.controller.jwt.JwtControllerConstant.SUB;
+import static academy.mindswap.booksome.controller.jwt.JwtControllerConstant.*;
 import static academy.mindswap.booksome.exception.jwt.JwtExceptionMessage.*;
-import static academy.mindswap.booksome.util.validation.PrintValidationError.printValidationError;
 
+@Tag(name = "Authentication", description = "Contains all the operations to generate a JWT token and a JWT refresh " +
+        "token.")
 @RestController
 @RequestMapping("api/v1")
 @CrossOrigin
@@ -43,25 +51,28 @@ public class JwtController {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException exception) {
-            throw new Exception(USER_DISABLED, exception);
+            throw new JwtAuthenticationException(USER_DISABLED);
         } catch (BadCredentialsException exception) {
-            throw new Exception(INVALID_CREDENTIALS, exception);
+            throw new JwtAuthenticationException(INVALID_CREDENTIALS);
         }
     }
 
+    @Operation(summary = "Generate JWT token", description = "Generate a JWT token.")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = JwtResponseDto.class)))
+    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ExceptionError.class)))
     @PostMapping("/authenticate")
     public ResponseEntity<?> createToken(@Valid @RequestBody JwtRequestDto jwtRequestDto,
-                                         BindingResult bindingResult) throws Exception {
+                                         BindingResult bindingResult) {
         if (jwtRequestDto == null) {
-            throw new JwtBadRequestException(AUTHENTICATION_NULL);
+            throw new JwtAuthenticationException(INVALID_CREDENTIALS);
         }
 
         if (bindingResult.hasErrors()) {
-            return printValidationError(bindingResult);
+            throw new JwtAuthenticationException(INVALID_CREDENTIALS);
         }
 
         authenticate(jwtRequestDto.getUsername(), jwtRequestDto.getPassword());
@@ -73,8 +84,13 @@ public class JwtController {
         return new ResponseEntity<>(new JwtResponseDto(token), HttpStatus.OK);
     }
 
+    @Operation(summary = "Generate JWT refresh token", description = "Generate a JWT refresh token.")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = JwtResponseDto.class)))
+    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ExceptionError.class)))
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/refreshtoken")
-    public ResponseEntity<JwtResponseDto> createRefreshToken(String headerStr, HttpServletRequest request) {
+    public ResponseEntity<JwtResponseDto> createRefreshToken(@RequestHeader(value = IS_REFRESH_TOKEN,
+            defaultValue = "true") String headerStr, HttpServletRequest request) {
         if (request == null) {
             throw new JwtBadRequestException(REQUEST_NULL);
         }
