@@ -59,7 +59,7 @@ ___
 
 ### This is what you will find in Swagger
 ![Screenshot 2022-09-28 at 11 46 44](https://user-images.githubusercontent.com/109354042/192772049-905fc6b3-161b-421c-a0f4-474e1c549f65.png)
-![Screenshot 2022-09-28 at 11 47 39](https://user-images.githubusercontent.com/109354042/192772044-8dfc3b80-1943-4985-9d3d-630a3f4468a3.png)
+![Screenshot 2022-09-28 at 14 58 43](https://user-images.githubusercontent.com/109354042/192799316-4d469d68-0bf2-4d02-9ff8-a810972b07ec.png)
 ![Screenshot 2022-09-28 at 11 48 07](https://user-images.githubusercontent.com/109354042/192772041-c888ca2e-3c59-4f6d-a2a6-a9a72c58509c.png)
 
 
