@@ -26,9 +26,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-import static academy.mindswap.booksome.controller.book.BookControllerConstant.*;
-import static academy.mindswap.booksome.controller.book.BookControllerPattern.LETTERS_ONLY;
-import static academy.mindswap.booksome.controller.book.BookControllerPattern.NUMBERS_ONLY;
+import static academy.mindswap.booksome.controller.book.BookControllerConstant.ISBN;
+import static academy.mindswap.booksome.controller.book.BookControllerPattern.ISBN_PATTERN;
 import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.ADMIN;
 import static academy.mindswap.booksome.util.role.HasRoleTypes.USER;
@@ -103,16 +102,7 @@ public class BookController {
             throw new BookBadRequestException(ALL_PARAMS_NULL);
         }
         allParams.forEach((key, value) -> {
-            if (key.equals(TITLE) && !value.matches(LETTERS_ONLY)) {
-                throw new BookBadRequestException(INVALID_TITLE);
-            }
-            if (key.equals(AUTHORS) && !value.matches(LETTERS_ONLY)) {
-                throw new BookBadRequestException(INVALID_AUTHOR);
-            }
-            if (key.equals(CATEGORY) && !value.matches(LETTERS_ONLY)) {
-                throw new BookBadRequestException(INVALID_CATEGORY);
-            }
-            if (key.equals(ISBN) && !value.matches(NUMBERS_ONLY)) {
+            if (key.equals(ISBN) && !value.matches(ISBN_PATTERN)) {
                 throw new BookBadRequestException(INVALID_ISBN);
             }
         });

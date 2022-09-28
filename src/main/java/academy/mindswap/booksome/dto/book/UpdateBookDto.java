@@ -12,8 +12,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import static academy.mindswap.booksome.dto.DtoValidationMessage.*;
-import static academy.mindswap.booksome.dto.DtoValidationPattern.*;
-import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
+import static academy.mindswap.booksome.dto.DtoValidationPattern.ISBN_PATTERN;
+import static academy.mindswap.booksome.dto.DtoValidationPattern.PUBLISHED_DATE_PATTERN;
+import static academy.mindswap.booksome.exception.book.BookExceptionMessage.INVALID_ISBN;
+import static academy.mindswap.booksome.exception.book.BookExceptionMessage.INVALID_PUBLISHED_DATE;
 
 @Data
 @Builder
@@ -21,7 +23,6 @@ import static academy.mindswap.booksome.exception.book.BookExceptionMessage.*;
 @AllArgsConstructor
 public class UpdateBookDto implements Serializable {
     @NotBlank(message = TITLE_MANDATORY)
-    @Pattern(regexp = LETTERS_ONLY, message = INVALID_TITLE)
     private String title;
 
     @NotNull(message = AUTHOR_MANDATORY)
@@ -31,17 +32,16 @@ public class UpdateBookDto implements Serializable {
     private List<String> category;
 
     @NotBlank(message = ISBN_MANDATORY)
-    @Pattern(regexp = ISBN_NUMBERS_ONLY, message = INVALID_ISBN)
+    @Pattern(regexp = ISBN_PATTERN, message = INVALID_ISBN)
     private String isbn;
 
     @NotBlank(message = DESCRIPTION_MANDATORY)
     private String description;
 
     @NotBlank(message = PUBLISHED_DATE_MANDATORY)
-    @Pattern(regexp = DATE_ONLY, message = INVALID_PUBLISHED_DATE)
+    @Pattern(regexp = PUBLISHED_DATE_PATTERN, message = INVALID_PUBLISHED_DATE)
     private String publishedDate;
 
     @NotBlank(message = PUBLISHER_MANDATORY)
-    @Pattern(regexp = LETTERS_ONLY, message = INVALID_PUBLISHER)
     private String publisher;
 }

@@ -5,12 +5,8 @@ public final class BookExceptionMessage {
     }
 
     public static final String ALL_PARAMS_NULL = "At least one parameter is required.";
-    public static final String INVALID_TITLE = "Please insert a valid book title (eg. Harry Potter).";
-    public static final String INVALID_AUTHOR = "Please insert a valid book author (eg. J. K. Rowling).";
-    public static final String INVALID_CATEGORY = "Please insert a valid book category (eg. Fiction).";
     public static final String INVALID_PUBLISHED_DATE = "Please insert a valid book published date (eg. 2011-05-13).";
-    public static final String INVALID_PUBLISHER = "Please insert a valid book publisher (eg. Pearson Education).";
-    public static final String INVALID_ISBN = "Please insert a valid book ISBN (eg. 9789722325332).";
+    public static final String INVALID_ISBN = "Please insert a valid book ISBN (eg. 9789722326018 or 9722326015).";
     public static final String BOOK_NULL = "Book cannot be null.";
     public static final String ISBN_ALREADY_EXISTS = "ISBN already exists.";
     public static final String BOOK_ISBN_NULL = "Book ISBN cannot be null.";

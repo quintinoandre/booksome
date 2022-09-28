@@ -113,10 +113,10 @@ public class BookServiceImpl implements BookService {
                     bookDto = googleBooksClient.searchAll(title, authors, category, isbn);
 
                     if (bookDto.isEmpty()) {
-                        throw new BookNotFoundException();
+                        throw new BooksNotFoundException();
                     }
                 } catch (RuntimeException exception) {
-                    throw new BookNotFoundException();
+                    throw new BooksNotFoundException();
                 }
             }
 
@@ -127,8 +127,16 @@ public class BookServiceImpl implements BookService {
 
         try {
             bookDto = googleBooksClient.searchAll(title, authors, category, isbn);
+
+            if (bookDto.isEmpty()) {
+                throw new BooksNotFoundException();
+            }
         } catch (RuntimeException exception) {
             bookDto = findInDatabase(title, authors, category, isbn);
+
+            if (bookDto.isEmpty()) {
+                throw new BooksNotFoundException();
+            }
         }
 
         LOGGER.info(BOOKS_FOUND);
