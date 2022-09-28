@@ -1,5 +1,6 @@
-package academy.mindswap.booksome;
+package academy.mindswap.booksome.tests;
 
+import academy.mindswap.booksome.tests.util.UserUtil;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
@@ -8,14 +9,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.responseSpecification;
 
 public class CreateNewUserTests {
-
-    private static String requestBody = "{\n" +
-           " \"name\" :\"José Silva\", \n" +
-            " \"email\" :\"1zedasilva@gmail.com\", \n" +
-            " \"password\" :\"1234\" \n }";
-
 
     @BeforeAll
     public static void setup(){
@@ -27,7 +23,7 @@ public class CreateNewUserTests {
         Response response = given()
                 .header("Content-Type", "application/json")
                 .and()
-                .body(requestBody)
+                .body(UserUtil.createUser())
                 .when()
                 .post("/api/v1/users")
                 .then()
@@ -40,7 +36,18 @@ public class CreateNewUserTests {
         Assertions.assertNull(response.jsonPath().getString("roles"));
     }
 
+    @Test
+    public void createUserWithMissingInformationShouldNotBeAllowed(){
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .and()
+                .body(UserUtil.createUserWithMissingInformation())
+                .post("/api/v1/users")
+                .then()
+                .extract().response();
 
+        Assertions.assertEquals(400, response.statusCode());
+    }
 
 
 
