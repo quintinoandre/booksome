@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 import static academy.mindswap.booksome.dto.DtoValidationMessage.*;
-import static academy.mindswap.booksome.dto.DtoValidationPattern.LETTERS_ONLY;
+import static academy.mindswap.booksome.dto.DtoValidationPattern.NAME_PATTERN;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.INVALID_NAME;
 
 @Data
@@ -21,7 +21,7 @@ import static academy.mindswap.booksome.exception.user.UserExceptionMessage.INVA
 @AllArgsConstructor
 public class UpdateUserDto implements Serializable {
     @NotBlank(message = NAME_MANDATORY)
-    @Pattern(regexp = LETTERS_ONLY, message = INVALID_NAME)
+    @Pattern(regexp = NAME_PATTERN, message = INVALID_NAME)
     private String name;
 
     @Email(message = EMAIL_MANDATORY)

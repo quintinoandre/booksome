@@ -8,7 +8,7 @@ import academy.mindswap.booksome.dto.user.UserDto;
 import academy.mindswap.booksome.exception.ExceptionError;
 import academy.mindswap.booksome.exception.user.UserBadRequestException;
 import academy.mindswap.booksome.service.interfaces.UserService;
-import academy.mindswap.booksome.util.RequestHandler;
+import academy.mindswap.booksome.util.request.RequestHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
