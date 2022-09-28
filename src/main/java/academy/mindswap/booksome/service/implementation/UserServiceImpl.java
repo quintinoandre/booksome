@@ -24,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDto saveBookAsFavorite(String isbn, String userId) {
         BookDto bookDto;
 
@@ -94,6 +97,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDto saveBookAsRead(String isbn, String userId) {
         BookDto bookDto;
 
@@ -133,6 +137,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDto save(SaveUserDto saveUserDto) {
         User userEntity = UserConverter.convertSaveUserDtoToUser(saveUserDto);
 
@@ -146,6 +151,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users")
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
 
@@ -159,6 +165,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id.concat('-favoriteBook')")
     public BookDto findFavoriteBook(String id, String userId) {
         List<String> favoriteBooksIds = findUser(userId).getFavoriteBooksId();
 
@@ -174,6 +181,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id.concat('-readBook')")
     public BookDto findReadBook(String id, String userId) {
         List<String> readBooksIds = findUser(userId).getReadBooksId();
 
@@ -188,8 +196,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(BookNotFoundException::new));
     }
 
-
     @Override
+    @Cacheable(value = "users", key = "#id.concat(':favoriteBooks')")
     public List<BookDto> findFavoriteBooks(String id) {
         List<String> favoriteBooksIds = findUser(id).getFavoriteBooksId();
 
@@ -204,6 +212,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id.concat(':readBooks')")
     public List<BookDto> findReadBooks(String id) {
         List<String> readBooksIds = findUser(id).getReadBooksId();
 
@@ -218,6 +227,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public UserDto findById(String id) {
         User user = findUser(id);
 
@@ -227,6 +237,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDto assignRoles(String id, RolesDto rolesDto) {
         User updatedUser = findUser(id);
 
@@ -238,6 +249,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDto update(String id, UpdateUserDto updateUserDto) {
         User userEntity = UserConverter.convertUpdateUserDtoToUser(updateUserDto);
 
@@ -260,6 +272,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDto deleteBookAsFavorite(String id, String userId) {
         bookService.verifyBookExists(id);
 
@@ -287,6 +300,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDto deleteBookAsRead(String id, String userId) {
         bookService.verifyBookExists(id);
 
@@ -314,6 +328,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public void delete(String id) {
         verifyUserExists(id);
 
@@ -323,11 +338,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public User findUser(String id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
     @Override
+    @Cacheable(value = "users", key = "#email")
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }

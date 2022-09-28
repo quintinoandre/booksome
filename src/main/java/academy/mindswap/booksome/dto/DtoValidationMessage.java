@@ -13,7 +13,10 @@ public final class DtoValidationMessage {
     public static final String PUBLISHER_MANDATORY = "Publisher is mandatory.";
     public static final String NAME_MANDATORY = "Name is mandatory.";
     public static final String EMAIL_MANDATORY = "Email must be valid.";
-    public static final String ROLE_MANDATORY = "At least one role is mandatory.";
-    public static final String USERNAME_MANDATORY = "Username is mandatory.";
+    public static final String EMAIL_NOT_BLANK = "Email must not be blank.";
+    public static final String USERNAME_MANDATORY = "Username must be valid.";
+    public static final String USERNAME_NOT_BLANK = "Username must not be blank.";
     public static final String PASSWORD_MANDATORY = "Password is mandatory.";
+    public static final String PASSWORD_SIZE = "Password size must be greater than 4.";
+    public static final String ROLE_MANDATORY = "At least one role is mandatory.";
 }

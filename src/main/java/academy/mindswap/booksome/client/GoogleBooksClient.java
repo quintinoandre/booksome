@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static academy.mindswap.booksome.client.GoogleBooksClientConstant.*;
 
@@ -88,6 +89,31 @@ public class GoogleBooksClient {
                 .concat(apiKey);
     }
 
+    private Optional<String> findIsbn(JsonNode items, int position) {
+        if (getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).size() == 2) {
+            if (getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE)
+                    .asText().equals(ISBN_13)) {
+                return Optional.ofNullable(getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0)
+                        .path(IDENTIFIER).asText());
+
+            } else if (getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE)
+                    .asText().equals(ISBN_10)) {
+                return Optional.ofNullable(getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(1)
+                        .path(IDENTIFIER).asText());
+            }
+        } else if (getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).size() == 1) {
+            if (getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE).asText()
+                    .equals(ISBN_13) ||
+                    getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE).asText()
+                            .equals(ISBN_10)) {
+                return Optional.ofNullable(getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0)
+                        .path(IDENTIFIER).asText());
+            }
+        }
+
+        return Optional.empty();
+    }
+
     public List<BookClientDto> searchAll(String title, String authors, String subject, String isbn) {
         String response = webClient
                 .get()
@@ -118,30 +144,9 @@ public class GoogleBooksClient {
             String description = getTextInfo(items, i, VOLUME_INFO, DESCRIPTION);
             JsonNode category = getJsonNodeInfo(items, i, VOLUME_INFO, CATEGORIES);
 
-            String isnb = null;
+            Optional<String> isnb = findIsbn(items, i);
 
-            if (getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).size() == 2) {
-                if (getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE)
-                        .asText().equals(ISBN_13)) {
-                    isnb = getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(IDENTIFIER)
-                            .asText();
-
-                } else if (getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE)
-                        .asText().equals(ISBN_10)) {
-                    isnb = getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(1)
-                            .path(IDENTIFIER).asText();
-                }
-            } else if (getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).size() == 1) {
-                if (getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE).asText()
-                        .equals(ISBN_13) ||
-                        getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE).asText()
-                                .equals(ISBN_10)) {
-                    isnb = getJsonNodeInfo(items, i, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(IDENTIFIER)
-                            .asText();
-                }
-            }
-
-            if (isnb == null) {
+            if (isnb.isEmpty()) {
                 continue;
             }
 
@@ -157,7 +162,7 @@ public class GoogleBooksClient {
                     .publisher(publisher)
                     .publishedDate(publishedDate)
                     .description(description)
-                    .isbn(isnb)
+                    .isbn(isnb.get())
                     .category(categoryList)
                     .build());
         }
