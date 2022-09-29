@@ -22,6 +22,10 @@ import static academy.mindswap.booksome.exception.jwt.JwtExceptionMessage.INVALI
 import static academy.mindswap.booksome.util.jwt.JwtUtilConstant.ROLES;
 import static academy.mindswap.booksome.util.jwt.JwtUtilConstant.USER_ID;
 
+/**
+ * This class is responsible for performing JWT operations such as creation and validation. It makes use of
+ * io.jsonwebtoken.Jwts to achieve this.
+ */
 @Component
 public class JwtUtil implements Serializable {
     @Serial
@@ -43,20 +47,37 @@ public class JwtUtil implements Serializable {
         this.userService = userService;
     }
 
+    /**
+     * This method retrieves any information from the token, but for that we need the secret key.
+     */
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
+    /**
+     * This method retrieves a chosen information from the token.
+     */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getClaimsFromToken(token);
 
         return claimsResolver.apply(claims);
     }
 
+    /**
+     * This method retrieves the "username" of the user from the jwt token.
+     */
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
+    /**
+     * When creating the token this method:
+     * 1. Set the token claims such as Issuer, Expiration, Subject and ID
+     * 2. Sign the JWT using the HS256 algorithm and the secret key
+     * 3. According to JWS Compact Serialization
+     * (https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1) JWT compression for a URL-safe
+     * string
+     */
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
@@ -77,6 +98,9 @@ public class JwtUtil implements Serializable {
                 .compact();
     }
 
+    /**
+     * This method generates the token for the user and adds the user's roles and user Id to the claims.
+     */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
@@ -87,6 +111,9 @@ public class JwtUtil implements Serializable {
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
+    /**
+     * This method validates the token and for that we need the secret key.
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
@@ -100,6 +127,9 @@ public class JwtUtil implements Serializable {
         }
     }
 
+    /**
+     * This method retrieves user roles from his token.
+     */
     public List<SimpleGrantedAuthority> getRolesFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 
@@ -108,6 +138,9 @@ public class JwtUtil implements Serializable {
         return roles.stream().map(SimpleGrantedAuthority::new).toList();
     }
 
+    /**
+     * This method retrieves user Id from his token.
+     */
     public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 

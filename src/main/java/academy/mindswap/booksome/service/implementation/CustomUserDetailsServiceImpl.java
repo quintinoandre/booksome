@@ -15,6 +15,13 @@ import java.util.ArrayList;
 
 import static academy.mindswap.booksome.exception.jwt.JwtExceptionMessage.INVALID_CREDENTIALS;
 
+/**
+ * This class implements Spring Security's UserDetailsService interface and overrides the loadUserByUsername method,
+ * to fetch the user's details from the database using the username.
+ * Spring Security Authentication Manager calls this method to get the user details from the database when
+ * authenticating the user details provided by the user.
+ * In addition, a user's password is stored in an encrypted format using BCrypt.
+ */
 @Service
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     private static final String ROLE_PREFIX = "ROLE_";

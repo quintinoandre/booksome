@@ -12,6 +12,10 @@ import java.io.Serializable;
 
 import static academy.mindswap.booksome.exception.jwt.JwtExceptionMessage.UNAUTHORIZED;
 
+/**
+ * This class extends Spring's AuthenticationEntryPoint class and will override its commence method. It rejects all
+ * unauthenticated requests and sends error code 401.
+ */
 @Component
 public class JwtEntryPoint implements AuthenticationEntryPoint, Serializable {
     @Serial
