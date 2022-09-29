@@ -28,6 +28,9 @@ import static academy.mindswap.booksome.client.GoogleBooksClientConstant.*;
 public class GoogleBooksClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleBooksClient.class);
 
+    /**
+     * This retrieves the external API key from the application properties environment variables.
+     */
     @Value("${google_books_client.api_key}")
     private String apiKey;
 
@@ -69,6 +72,10 @@ public class GoogleBooksClient {
         return items.get(position).path(path1).path(path2);
     }
 
+    /**
+     * This method builds the URI to search for books in the external API and the result depends on the user's choice,
+     * whether it is by ISBN or another option, such as title, author or subject.
+     */
     private String buildUri(String title, String authors, String subject, String isbn) {
         final String URL_PREFIX = "/".concat(RESOURCE_VOLUMES).concat("?").concat(Q_PARAMETER).concat("=")
                 .concat("");
@@ -89,6 +96,10 @@ public class GoogleBooksClient {
                 .concat(apiKey);
     }
 
+    /**
+     * This method retrieves, from the JSON received from the external API, the ISBN of 13 algorithms if it exists.
+     * Otherwise, try to retrieve the ISBN of 10 algorithms and if none of them exist, retrieve nothing.
+     */
     private Optional<String> findIsbn(JsonNode items, int position) {
         if (getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).size() == 2) {
             if (getJsonNodeInfo(items, position, VOLUME_INFO, INDUSTRY_IDENTIFIERS).get(0).path(TYPE)
@@ -114,6 +125,10 @@ public class GoogleBooksClient {
         return Optional.empty();
     }
 
+    /**
+     * This method searches for books in the external API, by title, authors, subject and isbn. Extracts, from the
+     * received JSON, only the information that matters to this application.
+     */
     public List<BookClientDto> searchAll(String title, String authors, String subject, String isbn) {
         String response = webClient
                 .get()
