@@ -25,6 +25,7 @@ In the API you will find
 - Documentation with Swagger (localhost:8080/docs)
 - Insomnia collection (which can be found in the path: resources/insomnia_collection)
 - Cache using Redis
+- Automated Tests
 
 ___
 
