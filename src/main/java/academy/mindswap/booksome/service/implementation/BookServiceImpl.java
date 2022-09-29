@@ -30,6 +30,9 @@ import static academy.mindswap.booksome.exception.book.BookExceptionMessage.ISBN
 import static academy.mindswap.booksome.service.implementation.BookServiceConstant.*;
 import static academy.mindswap.booksome.util.book.BookMessage.*;
 
+/**
+ * This class has all logic regarding books connection with database and api
+ */
 @Service
 @Slf4j
 public class BookServiceImpl implements BookService {
@@ -46,18 +49,38 @@ public class BookServiceImpl implements BookService {
         this.userService = userService;
     }
 
+    /**
+     * Search for books in database with the given params, all params are optional to be passed
+     *
+     * @param title
+     * @param authors
+     * @param category
+     * @param isbn
+     * @return a list of BooksDto with the params passed, or an empty list
+     */
     private List<BookDto> findInDatabase(String title, String authors, String category, String isbn) {
         return bookRepository.searchAll(title, authors, category, isbn)
                 .stream()
                 .map(BookConverter::convertBookToBookDto).toList();
     }
 
+    /**
+     * Checks if a book exists by the given ISBN. if not throws exception
+     *
+     * @param isbn
+     */
     private void verifyIsbnExists(String isbn) {
         if (Boolean.TRUE.equals(bookRepository.existsByIsbn(isbn))) {
             throw new BookBadRequestException(ISBN_ALREADY_EXISTS);
         }
     }
 
+    /**
+     * Inserts a book in the database if not existing already
+     *
+     * @param bookClientDto
+     * @return the Book inserted converted to Dto
+     */
     @Override
     @CacheEvict(value = "books", allEntries = true)
     public BookDto save(BookClientDto bookClientDto) {
@@ -70,6 +93,12 @@ public class BookServiceImpl implements BookService {
         return BookConverter.convertBookToBookDto(bookRepository.insert(bookEntity));
     }
 
+    /**
+     * Find book by specific id
+     *
+     * @param id
+     * @return the book found
+     */
     @Override
     @Cacheable(value = "books", key = "#id")
     public BookDto findById(String id) {
@@ -80,6 +109,11 @@ public class BookServiceImpl implements BookService {
         return BookConverter.convertBookToBookDto(book);
     }
 
+    /**
+     * Search for all books
+     *
+     * @return List of all books converted to Dto, or empty
+     */
     @Override
     @Cacheable(value = "books")
     public List<BookDto> findAll() {
@@ -94,6 +128,15 @@ public class BookServiceImpl implements BookService {
         return books.stream().map(BookConverter::convertBookToBookDto).toList();
     }
 
+    /******
+     * This method will first accept as arguments the params passed on the Uri search. Then will extract those params into variables and check if ISBN was passed
+     * to perform a search in database or external  Api.
+     * If not Isbn then performs a search on the external Api
+     * If can't find throw exception
+     *
+     * @param allParams
+     * @return list of bookDto
+     */
     @Override
     public List<?> searchAll(Map<String, String> allParams) {
         Map<String, String> filteredBookSearch = BookSearchFilter.filterSearch(allParams);
@@ -103,16 +146,16 @@ public class BookServiceImpl implements BookService {
         String category = filteredBookSearch.get(CATEGORY);
         String isbn = filteredBookSearch.get(ISBN);
 
-        List<?> bookDto;
+        List<?> bookDtoList;
 
         if (isbn != null) {
-            bookDto = findInDatabase(title, authors, category, isbn);
+            bookDtoList = findInDatabase(title, authors, category, isbn);
 
-            if (bookDto.isEmpty()) {
+            if (bookDtoList.isEmpty()) {
                 try {
-                    bookDto = googleBooksClient.searchAll(title, authors, category, isbn);
+                    bookDtoList = googleBooksClient.searchAll(title, authors, category, isbn);
 
-                    if (bookDto.isEmpty()) {
+                    if (bookDtoList.isEmpty()) {
                         throw new BooksNotFoundException();
                     }
                 } catch (RuntimeException exception) {
@@ -122,34 +165,44 @@ public class BookServiceImpl implements BookService {
 
             LOGGER.info(BOOKS_FOUND);
 
-            return bookDto;
+            return bookDtoList;
         }
 
         try {
-            bookDto = googleBooksClient.searchAll(title, authors, category, isbn);
-
-            if (bookDto.isEmpty()) {
+            bookDtoList = findInDatabase(title, authors, category, isbn);
+            if (bookDtoList.isEmpty()) {
                 throw new BooksNotFoundException();
             }
         } catch (RuntimeException exception) {
-            bookDto = findInDatabase(title, authors, category, isbn);
+            bookDtoList = googleBooksClient.searchAll(title, authors, category, isbn);
 
-            if (bookDto.isEmpty()) {
+            if (bookDtoList.isEmpty()) {
                 throw new BooksNotFoundException();
             }
         }
 
         LOGGER.info(BOOKS_FOUND);
 
-        return bookDto;
+        return bookDtoList;
     }
 
+    /**
+     * Search on database by book with given isbn
+     *
+     * @param isbn
+     * @return Book
+     */
     @Override
     @Cacheable(value = "books", key = "#isbn")
     public Book findByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn);
     }
 
+    /**
+     * Checks if books exists by given id or throw exception
+     *
+     * @param id
+     */
     @Override
     public void verifyBookExists(String id) {
         if (bookRepository.existsById(id)) {
@@ -159,6 +212,14 @@ public class BookServiceImpl implements BookService {
         throw new BookNotFoundException();
     }
 
+    /*******
+     * Verifies if the book passed by has the same params from the book to be updated
+     * If params are different, new params are set to the book in database and saved
+     *
+     * @param id
+     * @param updateBookDto
+     * @return BookDto of the updated book
+     */
     @Override
     @CacheEvict(value = "books", allEntries = true)
     public BookDto update(String id, UpdateBookDto updateBookDto) {
@@ -195,6 +256,14 @@ public class BookServiceImpl implements BookService {
         return BookConverter.convertBookToBookDto(bookRepository.save(updatedBook));
     }
 
+    /**
+     * Verifies if the book to be deleted exist in database or throws exception
+     * Then checks if books is saved in any list of favorites or read books of a user
+     * If saved, throws an exception and cannot be deleted
+     * If not existing in any users list, it can be deleted
+     *
+     * @param id
+     */
     @Override
     @CacheEvict(value = "books", allEntries = true)
     public void delete(String id) {
@@ -210,6 +279,12 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
+    /**
+     * Search book by given id
+     *
+     * @param id
+     * @return Book or throws exception
+     */
     @Override
     @Cacheable(value = "books", key = "#id")
     public Book findBook(String id) {

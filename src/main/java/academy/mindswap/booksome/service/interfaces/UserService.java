@@ -9,6 +9,9 @@ import academy.mindswap.booksome.model.User;
 
 import java.util.List;
 
+/**
+ * Interface that has all methods to be implemented in "UserServiceImpl" Class
+ */
 public interface UserService {
     UserDto saveBookAsFavorite(String isbn, String userId);
 

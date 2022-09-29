@@ -36,6 +36,9 @@ import java.util.Objects;
 import static academy.mindswap.booksome.exception.user.UserExceptionMessage.*;
 import static academy.mindswap.booksome.util.user.UserMessage.*;
 
+/**
+ * This class has all the logic regarding the user management
+ */
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -60,6 +63,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /*******
+     * Searches for a given isbn book on database or Api to set on user favorite list
+     * Checks if book is already on favorites list
+     * @param isbn
+     * @param userId
+     * @return A book Dto inserted on user's favorites list
+     */
     @Override
     @CacheEvict(value = "users", allEntries = true)
     public UserDto saveBookAsFavorite(String isbn, String userId) {
@@ -96,6 +106,13 @@ public class UserServiceImpl implements UserService {
         return UserConverter.convertUserToUserDto(userRepository.save(user));
     }
 
+    /*******
+     * Searches for a given isbn book on database or Api to set on user read list
+     * Checks if book is already on read list
+     * @param isbn
+     * @param userId
+     * @return A book Dto inserted on user's read list
+     */
     @Override
     @CacheEvict(value = "users", allEntries = true)
     public UserDto saveBookAsRead(String isbn, String userId) {
@@ -132,6 +149,12 @@ public class UserServiceImpl implements UserService {
         return UserConverter.convertUserToUserDto(userRepository.save(user));
     }
 
+    /**
+     * Inserts users in database with a check if email exists already
+     *
+     * @param saveUserDto
+     * @return User Dto inserted
+     */
     @Override
     @CacheEvict(value = "users", allEntries = true)
     public UserDto save(SaveUserDto saveUserDto) {
@@ -146,6 +169,12 @@ public class UserServiceImpl implements UserService {
         return UserConverter.convertUserToUserDto(userRepository.insert(userEntity));
     }
 
+    /**
+     * Find all users in database
+     * Throws exception if no users found
+     *
+     * @return
+     */
     @Override
     @Cacheable(value = "users")
     public List<UserDto> findAll() {
@@ -160,6 +189,12 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(UserConverter::convertUserToUserDto).toList();
     }
 
+    /****
+     * Find a favorite book by a given id
+     * @param id book id
+     * @param userId the user ID
+     * @returnthe book searched
+     */
     @Override
     @Cacheable(value = "users", key = "#id.concat('-favoriteBook')")
     public BookDto findFavoriteBook(String id, String userId) {
@@ -176,6 +211,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(BookNotFoundException::new));
     }
 
+    /****
+     * Find a read book by a given id
+     * @param id book id
+     * @param userId the user ID
+     * @returnthe book searched
+     */
     @Override
     @Cacheable(value = "users", key = "#id.concat('-readBook')")
     public BookDto findReadBook(String id, String userId) {
@@ -192,6 +233,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(BookNotFoundException::new));
     }
 
+    /*****
+     * Find the list of all favorites books of a given user Id
+     * Throws exception if empty
+     * @param id
+     * @return the list of books
+     */
     @Override
     @Cacheable(value = "users", key = "#id.concat(':favoriteBooks')")
     public List<BookDto> findFavoriteBooks(String id) {
@@ -207,6 +254,12 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    /*****
+     * Find the list of all read books of a given user Id
+     * Throws exception if empty
+     * @param id
+     * @return the list of books
+     */
     @Override
     @Cacheable(value = "users", key = "#id.concat(':readBooks')")
     public List<BookDto> findReadBooks(String id) {
@@ -222,6 +275,12 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    /**
+     * Find user by given id
+     *
+     * @param id
+     * @return user Dto
+     */
     @Override
     @Cacheable(value = "users", key = "#id")
     public UserDto findById(String id) {
@@ -232,6 +291,13 @@ public class UserServiceImpl implements UserService {
         return UserConverter.convertUserToUserDto(user);
     }
 
+    /**
+     * Sets a given role to the user ( Admin , User  )
+     *
+     * @param id
+     * @param rolesDto
+     * @return the updated user
+     */
     @Override
     @CacheEvict(value = "users", allEntries = true)
     public UserDto assignRoles(String id, RolesDto rolesDto) {
@@ -244,6 +310,13 @@ public class UserServiceImpl implements UserService {
         return UserConverter.convertUserToUserDto(userRepository.save(updatedUser));
     }
 
+    /**
+     * Updates the user data
+     *
+     * @param id
+     * @param updateUserDto
+     * @return the user updated and saved
+     */
     @Override
     @CacheEvict(value = "users", allEntries = true)
     public UserDto update(String id, UpdateUserDto updateUserDto) {
@@ -267,6 +340,14 @@ public class UserServiceImpl implements UserService {
         return UserConverter.convertUserToUserDto(userRepository.save(updatedUser));
     }
 
+    /********
+     * If user dont have that book as favorite throws exception
+     * Gets the book from the list and sets the new list without the taken book
+     * Then checks if book doesnt exist in any users list, is removed from database
+     * @param id
+     * @param userId
+     * @return the user updated
+     */
     @Override
     @CacheEvict(value = "users", allEntries = true)
     public UserDto deleteBookAsFavorite(String id, String userId) {
@@ -295,6 +376,14 @@ public class UserServiceImpl implements UserService {
         return UserConverter.convertUserToUserDto(userSaved);
     }
 
+    /********
+     * If user dont have that book as read throws exception
+     * Gets the book from the list and sets the new list without the taken book
+     * Then checks if book doesnt exist in any users list, is removed from database
+     * @param id
+     * @param userId
+     * @return the user updated
+     */
     @Override
     @CacheEvict(value = "users", allEntries = true)
     public UserDto deleteBookAsRead(String id, String userId) {
