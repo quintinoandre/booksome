@@ -61,6 +61,11 @@ public class JwtController {
         }
     }
 
+    /**
+     * This method gets the username and password from the request body and using Spring Authentication Manager we
+     * authenticate the username and password.
+     * If the credentials are valid, the JWT token will be created using the JwtUtil class and provided to the user.
+     */
     @Operation(summary = "Generate JWT token", description = "Generate a JWT token.")
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = JwtResponseDto.class)))
     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ExceptionError.class)))
@@ -84,6 +89,9 @@ public class JwtController {
         return new ResponseEntity<>(new JwtResponseDto(token), HttpStatus.OK);
     }
 
+    /**
+     * This method gets the claims from the request/token and using the JwtUtil class creates a refresh token.
+     */
     @Operation(summary = "Generate JWT refresh token", description = "Generate a JWT refresh token.")
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = JwtResponseDto.class)))
     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ExceptionError.class)))
