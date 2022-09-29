@@ -64,7 +64,6 @@ public class CreateNewUserTests {
         Assertions.assertEquals(400, repeatedResponse.statusCode());
 
     }
-
     @Test
     void createUserWithMissingInformationShouldNotBeAllowed() {
         Response response = given()
