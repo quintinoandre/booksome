@@ -8,6 +8,9 @@ import academy.mindswap.booksome.model.Book;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Interface that has all methods to be implemented on "BookServic Impl" Class
+ */
 public interface BookService {
     BookDto save(BookClientDto bookClientDto);
 
