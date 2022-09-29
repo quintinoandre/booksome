@@ -46,6 +46,8 @@ ___
  ### How to use it
  
 ```
+-> fill environment variables in application properties file
+
 -> docker-compose up -d
 
 -> run the application
